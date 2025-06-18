@@ -1,0 +1,128 @@
+---
+title: "Population Uncertainty Project"
+author: "Armelle Duston"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+## Setup and Libraries
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+knitr::opts_chunk$set(warning = F, message = F, echo = F)
+
+### Load Packages 
+library(ggplot2)
+library(tidyr)
+library(patchwork)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+### ggplot theme
+theme_set(theme_bw() +
+            theme(plot.title = element_text(hjust = 0.5, size = 16),
+                  plot.subtitle = element_text(hjust = 0.5, size = 12),
+                  axis.title = element_text(size = 12),
+                  axis.text = element_text(size = 10),
+                  strip.text = element_text(size = 12),
+                  legend.position = "bottom"))
+
+if (rstudioapi::isAvailable()) {
+  setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+}
+```
+
+
+## Simulate Data
+
+THIS IS CHATGPT OUTPUT, VERIFY THINGS ARE CORRECT!!
+```{r}
+## R script to simulate data from the hierarchical Bayesian model with exact benchmarking
+# Using univariate conditional CAR sampling instead of a multivariate normal draw
+
+# Load required packages
+library(MASS)    # for multivariate functions (for mvrnorm if needed later)
+
+# 1. Define spatial structure
+n <- 100  # number of fine-scale areas
+# Example adjacency: a simple ring
+W <- matrix(0, n, n)
+for(i in 1:n) {
+  W[i, ifelse(i==1, n, i-1)] <- 1
+  W[i, ifelse(i==n, 1, i+1)] <- 1
+}
+D <- diag(rowSums(W))
+
+# 2. Simulate latent spatial field S via univariate conditional CAR
+rho <- 0.9        # spatial correlation parameter (0 < rho < 1)
+sigma2_s <- 1     # marginal variance scale
+
+# Precompute neighbors for speed
+eighbors <- lapply(1:n, function(i) which(W[i, ] == 1))
+
+# Initialize S arbitrarily (e.g., zeros)
+S <- rep(0, n)
+
+# Gibbs sampler settings for S
+n_iter <- 1000     # number of Gibbs iterations
+burn_in <- 200     # burn-in
+
+for(iter in 1:n_iter) {
+  for(i in 1:n) {
+    neigh <- neighbors[[i]]
+    d_i <- D[i, i]
+    # Conditional mean: (rho * sum_{j in neigh} S_j) / d_i
+    mu_i <- (rho * sum(S[neigh])) / d_i
+    # Conditional variance: sigma2_s / d_i
+    var_i <- sigma2_s / d_i
+    # Draw from Normal
+    S[i] <- rnorm(1, mean = mu_i, sd = sqrt(var_i))
+  }
+}
+# Discard burn-in
+S <- S
+
+# 3. Simulate true counts P_i ~ Poisson(exp(S_i))
+lambda <- exp(S)
+P <- rpois(n, lambda)
+
+# 4. Add measurement noise: P*_i | P_i ~ Laplace(P_i, tau)
+tau <- 2      # known noise scale
+rlaplace <- function(n, mu = 0, b = 1) {
+  u <- runif(n) - 0.5
+  return(mu - b * sign(u) * log(1 - 2 * abs(u)))
+}
+P_star <- round(P + rlaplace(n, mu = 0, b = tau))
+P_star <- pmax(P_star, 0)
+
+# 5. Define coarse regions and benchmark totals U_j
+J <- 10  # number of regions
+region_id <- sample(1:J, n, replace = TRUE)
+U <- tapply(P_star, region_id, sum)
+
+# 6. Output simulated data
+sim_data <- list(
+  W = W,
+  D = D,
+  S = S,
+  P = P,
+  P_star = P_star,
+  region_id = region_id,
+  U = as.numeric(U),
+  tau = tau,
+  rho = rho,
+  sigma2_s = sigma2_s
+)
+
+# Save to file
+save(sim_data, file = "simulated_data.RData")
+
+# Print summaries
+cat("Simulation complete. Summary of U_j (benchmarks):\n")
+print(summary(sim_data$U))
+
+```
+
+
