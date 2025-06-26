@@ -1,0 +1,98 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm} 
+\usepackage{graphicx} % Required for inserting images
+\usepackage{enumitem}
+\usepackage{titling}
+\usepackage{dsfont}
+
+\let\oldemptyset\emptyset
+\let\emptyset\varnothing
+\DeclareMathOperator{\cA}{\mathcal{A}}
+\DeclareMathOperator{\cB}{\mathcal{B}}
+\DeclareMathOperator{\cI}{\mathcal{I}}
+\DeclareMathOperator{\cX}{\mathcal{X}}
+\DeclareMathOperator{\cY}{\mathcal{Y}}
+
+
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Var}{\mathbb{V}ar}
+\DeclareMathOperator{\Cov}{\mathbb{C}ov}
+\DeclareMathOperator{\N}{\mathbb{N}}
+\DeclareMathOperator{\R}{\mathbb{R}}
+\DeclareMathOperator{\I}{\mathbb{I}}
+
+\title{Population uncertainty from Census DP}
+\author{Armelle Duston}
+\date{June 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Proposed Models}
+
+\subsection{Exact Benchmarking}
+
+\begin{align}
+    U_j |P_{M_j}^* &\sim \text{BM}_{\text{exact}}(P_{M_j}^*)  = \I \left( \sum_{i \in M_j} P_i^* = U_j \And P_i^* \in \N_0 \right) \\
+    P_i^* | P_i &\sim G(P_i, \tau) = \text{Laplace}( P_i, \tau)  \\
+    P_i &\sim \text{Poisson}(\exp(S))\\
+    S &\sim \text{CAR}(\rho) \propto \exp \left( - \frac{1}{2} S^T(\kappa (D- \rho W)) S \right)
+\end{align}
+
+\textbf{Things that are known:} 
+\begin{itemize}
+    \item $P_i^*, i = \{1, \dots, n\}$ (reported noisy/processed population counts)
+    \item $\tau$ (related to Census's "privacy budget" parameter)
+    \item W (weight matrix specifying pre-specified neighbor structure)
+    \item D (function of W, used for calculating precision matrix $\kappa (D- \rho W)$)
+\end{itemize}
+
+\textbf{Things that are not known and require prior:}
+\begin{itemize}
+    \item $U_j, j \in \{1, \dots, J\}$ (values to which $P_{M_j}$'s are benchmarked, "prior" specified above)
+    \item $P_i, i \in \{1, \dots, n\}$ (true population counts, prior specified above)
+    \item $S$ (spatial random effect, prior specified above)
+    \item $\rho$ (spatial correlation), uniform(0,1) prior (?)
+    \item $\kappa = 1/\sigma^2_s$ (precision scaling variable) inv-gamma(a,b) prior (?)
+\end{itemize}
+
+\textbf{Posterior Distribution}
+\[ f(U, P, S, \rho, \sigma_s^2|P^*) \propto f(U|P^*) f(P^*|P) f(P|S) f(S|\rho, \kappa) f(\rho) f(\kappa) \]
+
+\newpage
+
+\subsection{Inexact Benchmarking}
+
+Everything is the same except 
+
+\begin{align}
+    \eta U_j |P_{M_j}^* &\sim \text{BM}_{\text{inexact}}(P_{M_j}^*) = \text{Poisson}(\eta \sum_{i \in M_j} P_i^*) \I(P_i^* \in \N_0)
+\end{align} 
+
+Where $\eta$ is a pre-specified discripancy parameter which controls how far off the counts are allowed to be from the benchmarks 
+
+\section{Simulation Study}
+
+\subsection{Plan}
+
+\begin{enumerate}
+    \item Simulate data according to the model above including spatial correlation, noise injection, and benchmarking
+
+    \item Assume simple spatial model
+
+    \item Assume spatial model + noise injection 
+
+    \item Assume spatial model + noise injection + benchmarking
+
+    \item Evaluate performance using 
+    \begin{itemize}
+        \item bias
+        \item variance
+        \item credible interval coverage
+        \item anything else? 
+    \end{itemize}
+\end{enumerate}
+
+\end{document}
