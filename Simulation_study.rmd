@@ -19,6 +19,12 @@ library(patchwork)
 library(dplyr)
 library(knitr)
 library(kableExtra)
+library(MASS)
+library(nimble)
+library(coda)
+library(extraDistr)
+library(igraph)
+library(RColorBrewer)
 
 ### ggplot theme
 theme_set(theme_bw() +
@@ -37,17 +43,10 @@ if (rstudioapi::isAvailable()) {
 
 ## Simulate Data
 
-THIS IS CHATGPT OUTPUT, VERIFY THINGS ARE CORRECT!!
 ```{r}
-## R script to simulate data from the hierarchical Bayesian model with exact benchmarking
-# Using univariate conditional CAR sampling instead of a multivariate normal draw
 
-# Load required packages
-library(MASS)    # for multivariate functions (for mvrnorm if needed later)
-
-# 1. Define spatial structure
-n <- 100  # number of fine-scale areas
-# Example adjacency: a simple ring
+# 1. Define a spatial structure
+n <- 100  
 W <- matrix(0, n, n)
 for(i in 1:n) {
   W[i, ifelse(i==1, n, i-1)] <- 1
@@ -55,47 +54,29 @@ for(i in 1:n) {
 }
 D <- diag(rowSums(W))
 
-# 2. Simulate latent spatial field S via univariate conditional CAR
-rho <- 0.9        # spatial correlation parameter (0 < rho < 1)
-sigma2_s <- 1     # marginal variance scale
+# 2. Simulate latent spatial field S with (proper) CAR structure
+rho      <- 0.7        # spatial correlation parameter (0 < rho < 1)
+kappa    <- 0.25          # precision scaling parameter
+sigma2_s <- 1/kappa    # marginal variance scale 
 
-# Precompute neighbors for speed
-eighbors <- lapply(1:n, function(i) which(W[i, ] == 1))
+# Construct precision matrix
+Q <- kappa * (D - rho * W)
+# Add a small jitter for numerical stability
+Q_pd <- Q + diag(1e-6, n)
 
-# Initialize S arbitrarily (e.g., zeros)
-S <- rep(0, n)
-
-# Gibbs sampler settings for S
-n_iter <- 1000     # number of Gibbs iterations
-burn_in <- 200     # burn-in
-
-for(iter in 1:n_iter) {
-  for(i in 1:n) {
-    neigh <- neighbors[[i]]
-    d_i <- D[i, i]
-    # Conditional mean: (rho * sum_{j in neigh} S_j) / d_i
-    mu_i <- (rho * sum(S[neigh])) / d_i
-    # Conditional variance: sigma2_s / d_i
-    var_i <- sigma2_s / d_i
-    # Draw from Normal
-    S[i] <- rnorm(1, mean = mu_i, sd = sqrt(var_i))
-  }
-}
-# Discard burn-in
-S <- S
+#  Sample S ~ N(0, Sigma = solve(Q_pd))
+Sigma <- solve(Q_pd)
+S <- mvrnorm(1, mu = rep(0, n), Sigma = Sigma)
 
 # 3. Simulate true counts P_i ~ Poisson(exp(S_i))
 lambda <- exp(S)
 P <- rpois(n, lambda)
 
 # 4. Add measurement noise: P*_i | P_i ~ Laplace(P_i, tau)
-tau <- 2      # known noise scale
-rlaplace <- function(n, mu = 0, b = 1) {
-  u <- runif(n) - 0.5
-  return(mu - b * sign(u) * log(1 - 2 * abs(u)))
-}
-P_star <- round(P + rlaplace(n, mu = 0, b = tau))
-P_star <- pmax(P_star, 0)
+tau <- 0.25      # known noise scale (related to "privacy budget")
+P_star <- round(P + rlaplace(n, mu = 0, sigma = tau))
+P_star <- ifelse(P_star < 0, P_star == 0, P_star)
+
 
 # 5. Define coarse regions and benchmark totals U_j
 J <- 10  # number of regions
@@ -116,13 +97,313 @@ sim_data <- list(
   sigma2_s = sigma2_s
 )
 
-# Save to file
-save(sim_data, file = "simulated_data.RData")
 
-# Print summaries
-cat("Simulation complete. Summary of U_j (benchmarks):\n")
-print(summary(sim_data$U))
+```
 
+### Plot neighborhood structure
+
+```{r}
+
+# sim_data$W       : n×n adjacency matrix
+# sim_data$S       : latent log-intensities
+# sim_data$P       : true counts
+# sim_data$region_id: region labels  
+
+
+# Build igraph object
+g <- graph_from_adjacency_matrix(sim_data$W, mode = "undirected")
+
+# Layout (e.g. Fruchterman–Reingold)
+set.seed(42)
+layout_ij <- layout_with_fr(g)
+
+# 1. Choose a palette with J distinct colors
+J <- length(unique(sim_data$region_id))
+palette <- brewer.pal(min(J, 12), "Set3")  # up to 12 colors; you can pick another brewer palette
+
+# 2. Assign each region its color
+region_cols <- palette[sim_data$region_id]
+
+# 3. Plot, coloring nodes by region
+plot(g, 
+     layout        = layout_ij,
+     vertex.size   = 6,
+     vertex.color  = region_cols,
+     vertex.label  = NA,
+     edge.color    = "grey80",
+     main          = "Adjacency Graph with Regions")
+
+# 4. Add a legend
+legend("topright",
+       legend = paste("Region", sort(unique(sim_data$region_id))),
+       col    = palette[sort(unique(sim_data$region_id))],
+       pch    = 19,
+       pt.cex = 1.5,
+       bty    = "n")
+
+
+```
+
+## Non-spatial Bayesian Model
+```{r}
+
+constants <- list(
+  n = length(sim_data$P_star)
+)
+
+data <- list(
+  P = sim_data$P_star
+)
+
+inits <- list(
+  lambda = 0.5
+)
+
+code <- nimbleCode({
+  # prior
+  lambda ~ dgamma(0.001, 0.001)
+  
+  for (i in 1:n){
+    P[i] ~ dpois(lambda)
+  }
+})
+
+model <- nimbleModel(code, data = data, inits = inits, constants = constants)
+conf  <- configureMCMC(model)
+
+Rmcmc <- buildMCMC(conf)
+Cmodel <- compileNimble(model)
+Cmcmc  <- compileNimble(Rmcmc, project = Cmodel)
+
+# Run MCMC
+niter   <- 10000
+nburnin <- 2500
+thin    <- 10
+samples <- runMCMC(Cmcmc, 
+                   niter = niter, 
+                   nburnin = nburnin, 
+                   thin = thin, 
+                   nchains = 3, 
+                   samplesAsCodaMCMC = TRUE)
+
+# Diagnostics 
+traceplot(as.mcmc.list(samples))
+
+
+
+```
+
+
+
+## Spatial-only Bayesian Model
+
+```{r}
+
+# Prepare inputs for NIMBLE
+n         <- length(sim_data$S)
+J         <- length(sim_data$U)
+neighbors <- lapply(1:n, function(i) which(sim_data$W[i, ] == 1))
+numNeigh  <- sapply(neighbors, length)
+adj <- unlist(neighbors)
+weights <- rep(1, length(adj))
+mu <- rep(0, n)
+
+# Bundle constants
+constants <- list(
+  n = n,
+  J = J,
+  adj = adj,
+  weights = weights,
+  numNeigh = numNeigh,
+  region_id = sim_data$region_id,
+  tau = sim_data$tau,
+  mu = mu
+)
+
+data <- list(
+  Pstar = sim_data$P_star,
+  U_obs = sim_data$U
+)
+
+# Initial values
+inits <- list(
+  S = rnorm(n, 0, 1),
+  P = P_star,
+  rho = 0.5,
+  sigma2 = 1
+)
+
+# Define the model 
+code <- nimbleCode({
+  # Hyperpriors
+  rho ~ dunif(0, 1)
+  sigma2 ~ dgamma(0.001, 0.001)
+
+  # Proper CAR prior on S
+  S[1:n] ~ dcar_proper(adj = adj, 
+                       num = numNeigh, 
+                       tau = kappa, 
+                       gamma = rho)
+
+  # Process model: Poisson counts
+  for(i in 1:n) {
+    P[i] ~ dpois(exp(S[i]))
+  }
+  
+})
+
+
+# Build and compile the model
+model <- nimbleModel(code, data = data, inits = inits, constants = constants)
+conf  <- configureMCMC(model)
+
+# Customize samplers
+# Use slice sampling for rho and kappa
+conf$removeSampler('rho')
+conf$addSampler(target = 'rho', type = 'slice')
+conf$removeSampler('kappa')
+conf$addSampler(target = 'kappa', type = 'slice')
+
+# Build and compile MCMC
+Rmcmc <- buildMCMC(conf)
+Cmodel <- compileNimble(model)
+Cmcmc  <- compileNimble(Rmcmc, project = Cmodel)
+
+# Run MCMC
+niter   <- 20000
+nburnin <- 5000
+thin    <- 10
+samples <- runMCMC(Cmcmc, 
+                   niter = niter, 
+                   nburnin = nburnin, 
+                   thin = thin, 
+                   nchains = 3, 
+                   samplesAsCodaMCMC = TRUE)
+
+
+
+```
+
+## Spatial + DP noise Bayesian Model
+
+```{r}
+
+```
+
+## Spatial + DP noise + benchmarking Bayesian Model
+
+CHATGPT CODE, CHECK EVERYTHING
+```{r}
+
+# Prepare inputs for NIMBLE
+n         <- length(sim_data$S)
+J         <- length(sim_data$U)
+neighbors <- lapply(1:n, function(i) which(sim_data$W[i, ] == 1))
+numNeigh  <- sapply(neighbors, length)
+adj <- unlist(neighbors)
+weights <- rep(1, length(adj))
+mu <- rep(0, n)
+
+# Bundle constants
+constants <- list(
+  n = n,
+  J = J,
+  adj = adj,
+  weights = weights,
+  numNeigh = numNeigh,
+  region_id = sim_data$region_id,
+  tau = sim_data$tau,
+  mu = mu
+)
+
+data <- list(
+  Pstar = sim_data$P_star,
+  U_obs = sim_data$U
+)
+
+# Initial values
+inits <- list(
+  S = rnorm(n, 0, 1),
+  P = pmax(sim_data$P_star, 1),
+  rho = 0.5,
+  kappa = 1
+)
+
+# Define the model 
+code <- nimbleCode({
+  # Hyperpriors
+  rho ~ dunif(0, 1)
+  sigma2 ~ dgamma(0.001, 0.001)
+  kappa <- 1 / sigma2
+
+  # Proper CAR prior on S
+  S[1:n] ~ dcar_proper(adj = adj, 
+                       num = numNeigh, 
+                       tau = kappa, 
+                       gamma = rho)
+
+  # Process model: Poisson counts
+  for(i in 1:n) {
+    P[i] ~ dpois(exp(S[i]))
+  }
+
+  # Measurement model: Laplace error
+  for(i in 1:n) {
+    Pstar[i] ~ ddexp(P[i], tau)
+  }
+
+  # Exact benchmarking: enforce sum of Pstar in each region equals observed U_obs
+  for(j in 1:J) {
+    U_sum[j] <- sum(Pstar[region_id == j])
+    U_obs[j] ~ dconstraint(U_sum[j] == U_obs[j])
+  }
+})
+
+
+# Build and compile the model
+model <- nimbleModel(code, data = data, inits = inits, constants = constants)
+conf  <- configureMCMC(model)
+
+# Customize samplers
+# Use slice sampling for rho and kappa
+conf$removeSampler('rho')
+conf$addSampler(target = 'rho', type = 'slice')
+conf$removeSampler('kappa')
+conf$addSampler(target = 'kappa', type = 'slice')
+
+# Build and compile MCMC
+Rmcmc <- buildMCMC(conf)
+Cmodel <- compileNimble(model)
+Cmcmc  <- compileNimble(Rmcmc, project = Cmodel)
+
+# Run MCMC
+niter   <- 20000
+nburnin <- 5000
+thin    <- 10
+samples <- runMCMC(Cmcmc, 
+                   niter = niter, 
+                   nburnin = nburnin, 
+                   thin = thin, 
+                   nchains = 3, 
+                   samplesAsCodaMCMC = TRUE)
+
+# Diagnostics and summaries
+print(summary(samples))
+autocorr.plot(samples)
+mcmc_diag <- as.mcmc(samples)
+print(gelman.diag(mcmc_diag))
+eff_sizes <- effectiveSize(mcmc_diag)
+print(eff_sizes)
+
+# Posterior summaries for rho and kappa
+rho_post   <- samples[,'rho']
+kappa_post <- samples[,'kappa']
+cat('Posterior mean rho:', mean(rho_post), '\n')
+cat('Posterior mean sigma2:', mean(1/kappa_post), '\n')
+
+# Save samples for downstream analysis
+save(samples, file = 'model_fit_samples.RData')
+cat('Model fitting complete. Samples saved to model_fit_samples.RData\n')
 ```
 
 
