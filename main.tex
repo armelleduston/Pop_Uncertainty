@@ -44,6 +44,7 @@
 \textbf{Things that are known:} 
 \begin{itemize}
     \item $P_i^*, i = \{1, \dots, n\}$ (reported noisy/processed population counts)
+    \item $U_j, j \in \{1, \dots, J\}$ (values to which $P_{M_j}$'s are benchmarked, "prior" specified above)
     \item $\tau$ (related to Census's "privacy budget" parameter)
     \item W (weight matrix specifying pre-specified neighbor structure)
     \item D (function of W, used for calculating precision matrix $\kappa (D- \rho W)$)
@@ -51,7 +52,6 @@
 
 \textbf{Things that are not known and require prior:}
 \begin{itemize}
-    \item $U_j, j \in \{1, \dots, J\}$ (values to which $P_{M_j}$'s are benchmarked, "prior" specified above)
     \item $P_i, i \in \{1, \dots, n\}$ (true population counts, prior specified above)
     \item $S$ (spatial random effect, prior specified above)
     \item $\rho$ (spatial correlation), uniform(0,1) prior (?)
@@ -59,7 +59,7 @@
 \end{itemize}
 
 \textbf{Posterior Distribution}
-\[ f(U, P, S, \rho, \sigma_s^2|P^*) \propto f(U|P^*) f(P^*|P) f(P|S) f(S|\rho, \kappa) f(\rho) f(\kappa) \]
+\[ f(U, P, S, \rho, \kappa |P^*) \propto f(U|P^*) f(P^*|P) f(P|S) f(S|\rho, \kappa) f(\rho) f(\kappa) \]
 
 \newpage
 
