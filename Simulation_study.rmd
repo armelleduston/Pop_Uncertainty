@@ -43,7 +43,7 @@ if (rstudioapi::isAvailable()) {
 
 ## Simulate Data
 
-```{r}
+```{r simulate}
 
 # 1. Define a spatial structure
 n <- 100  
@@ -102,7 +102,7 @@ sim_data <- list(
 
 ### Plot neighborhood structure
 
-```{r}
+```{r plot_neighborhood}
 
 # sim_data$W       : n×n adjacency matrix
 # sim_data$S       : latent log-intensities
@@ -144,147 +144,106 @@ legend("topright",
 
 ```
 
-## Non-spatial Bayesian Model
-```{r}
-
-constants <- list(
-  n = length(sim_data$P_star)
-)
-
-data <- list(
-  P = sim_data$P_star
-)
-
-inits <- list(
-  lambda = 0.5
-)
-
-code <- nimbleCode({
-  # prior
-  lambda ~ dgamma(0.001, 0.001)
-  
-  for (i in 1:n){
-    P[i] ~ dpois(lambda)
-  }
-})
-
-model <- nimbleModel(code, data = data, inits = inits, constants = constants)
-conf  <- configureMCMC(model)
-
-Rmcmc <- buildMCMC(conf)
-Cmodel <- compileNimble(model)
-Cmcmc  <- compileNimble(Rmcmc, project = Cmodel)
-
-# Run MCMC
-niter   <- 10000
-nburnin <- 2500
-thin    <- 10
-samples <- runMCMC(Cmcmc, 
-                   niter = niter, 
-                   nburnin = nburnin, 
-                   thin = thin, 
-                   nchains = 3, 
-                   samplesAsCodaMCMC = TRUE)
-
-# Diagnostics 
-traceplot(as.mcmc.list(samples))
-
-
-
-```
-
 
 
 ## Spatial-only Bayesian Model
 
-```{r}
+```{r spatial_only}
 
 # Prepare inputs for NIMBLE
 n         <- length(sim_data$S)
-J         <- length(sim_data$U)
 neighbors <- lapply(1:n, function(i) which(sim_data$W[i, ] == 1))
-numNeigh  <- sapply(neighbors, length)
+num  <- sapply(neighbors, length)
 adj <- unlist(neighbors)
-weights <- rep(1, length(adj))
 mu <- rep(0, n)
+L <- length(adj)
+M <- CAR_calcM(num)
+C <- CAR_calcC(adj, num)
 
 # Bundle constants
-constants <- list(
+constants1 <- list(
   n = n,
-  J = J,
   adj = adj,
-  weights = weights,
-  numNeigh = numNeigh,
-  region_id = sim_data$region_id,
+  num = num,
   tau = sim_data$tau,
-  mu = mu
+  mu = mu,
+  L = L,
+  M = M,
+  C = C
 )
 
-data <- list(
-  Pstar = sim_data$P_star,
-  U_obs = sim_data$U
+
+data1 <- list(
+  Pstar = sim_data$P_star
 )
 
 # Initial values
-inits <- list(
+inits1 <- list(
   S = rnorm(n, 0, 1),
-  P = P_star,
   rho = 0.5,
-  sigma2 = 1
+  kappa = 1
 )
 
 # Define the model 
-code <- nimbleCode({
+code1 <- nimbleCode({
   # Hyperpriors
   rho ~ dunif(0, 1)
-  sigma2 ~ dgamma(0.001, 0.001)
+  kappa ~ dinvgamma(0.001, 0.001)
 
   # Proper CAR prior on S
-  S[1:n] ~ dcar_proper(adj = adj, 
-                       num = numNeigh, 
+  S[1:n] ~ dcar_proper(mu = mu[1:n],
+                       adj = adj[1:L], 
+                       num = num[1:n],
                        tau = kappa, 
-                       gamma = rho)
+                       gamma = rho,
+                       M = M[1:n],
+                       C = C[1:L])
 
   # Process model: Poisson counts
   for(i in 1:n) {
-    P[i] ~ dpois(exp(S[i]))
+    Pstar[i] ~ dpois(exp(S[i]))
   }
   
 })
 
 
 # Build and compile the model
-model <- nimbleModel(code, data = data, inits = inits, constants = constants)
-conf  <- configureMCMC(model)
+model1 <- nimbleModel(code1, data = data1, inits = inits1, constants = constants1)
+conf1  <- configureMCMC(model1)
 
 # Customize samplers
 # Use slice sampling for rho and kappa
-conf$removeSampler('rho')
-conf$addSampler(target = 'rho', type = 'slice')
-conf$removeSampler('kappa')
-conf$addSampler(target = 'kappa', type = 'slice')
+conf1$removeSampler('rho')
+conf1$addSampler(target = 'rho', type = 'slice')
+conf1$removeSampler('kappa')
+conf1$addSampler(target = 'kappa', type = 'slice')
 
 # Build and compile MCMC
-Rmcmc <- buildMCMC(conf)
-Cmodel <- compileNimble(model)
-Cmcmc  <- compileNimble(Rmcmc, project = Cmodel)
+Rmcmc1 <- buildMCMC(conf1)
+Cmodel1 <- compileNimble(model1)
+Cmcmc1  <- compileNimble(Rmcmc1, project = Cmodel1)
 
 # Run MCMC
 niter   <- 20000
 nburnin <- 5000
 thin    <- 10
-samples <- runMCMC(Cmcmc, 
+samples1 <- runMCMC(Cmcmc1, 
                    niter = niter, 
                    nburnin = nburnin, 
                    thin = thin, 
                    nchains = 3, 
                    samplesAsCodaMCMC = TRUE)
 
+# Traceplots
+traceplot(as.mcmc.list(samples1))
 
+# Save samples for downstream analysis
+save(samples1, file = 'model_fit_samples1.RData')
+cat('Model fitting complete. Samples saved to model_fit_samples1.RData\n')
 
 ```
 
-## Spatial + DP noise Bayesian Model
+## Spatial + DP noise Bayesian Model ?
 
 ```{r}
 
@@ -292,55 +251,58 @@ samples <- runMCMC(Cmcmc,
 
 ## Spatial + DP noise + benchmarking Bayesian Model
 
-CHATGPT CODE, CHECK EVERYTHING
-```{r}
+```{r spatial_noise_benchmarking}
 
 # Prepare inputs for NIMBLE
 n         <- length(sim_data$S)
-J         <- length(sim_data$U)
 neighbors <- lapply(1:n, function(i) which(sim_data$W[i, ] == 1))
-numNeigh  <- sapply(neighbors, length)
+num  <- sapply(neighbors, length)
 adj <- unlist(neighbors)
-weights <- rep(1, length(adj))
 mu <- rep(0, n)
+L <- length(adj)
+M <- CAR_calcM(num)
+C <- CAR_calcC(adj, num)
 
 # Bundle constants
-constants <- list(
+constants2 <- list(
   n = n,
-  J = J,
   adj = adj,
-  weights = weights,
-  numNeigh = numNeigh,
-  region_id = sim_data$region_id,
+  num = num,
   tau = sim_data$tau,
-  mu = mu
+  mu = mu,
+  L = L,
+  M = M,
+  C = C
 )
 
-data <- list(
+
+data2 <- list(
   Pstar = sim_data$P_star,
   U_obs = sim_data$U
 )
 
 # Initial values
-inits <- list(
+inits2 <- list(
   S = rnorm(n, 0, 1),
-  P = pmax(sim_data$P_star, 1),
+  P = P_star,
   rho = 0.5,
   kappa = 1
 )
 
 # Define the model 
-code <- nimbleCode({
+code2 <- nimbleCode({
   # Hyperpriors
   rho ~ dunif(0, 1)
-  sigma2 ~ dgamma(0.001, 0.001)
-  kappa <- 1 / sigma2
+  kappa ~ dinvgamma(0.001, 0.001)
 
   # Proper CAR prior on S
-  S[1:n] ~ dcar_proper(adj = adj, 
-                       num = numNeigh, 
+  S[1:n] ~ dcar_proper(mu = mu[1:n],
+                       adj = adj[1:L], 
+                       num = num[1:n],
                        tau = kappa, 
-                       gamma = rho)
+                       gamma = rho,
+                       M = M[1:n],
+                       C = C[1:L])
 
   # Process model: Poisson counts
   for(i in 1:n) {
@@ -357,53 +319,46 @@ code <- nimbleCode({
     U_sum[j] <- sum(Pstar[region_id == j])
     U_obs[j] ~ dconstraint(U_sum[j] == U_obs[j])
   }
+  
 })
 
 
 # Build and compile the model
-model <- nimbleModel(code, data = data, inits = inits, constants = constants)
-conf  <- configureMCMC(model)
+model2 <- nimbleModel(code2, data = data2, inits = inits2, constants = constants2)
+conf2  <- configureMCMC(model2)
 
 # Customize samplers
 # Use slice sampling for rho and kappa
-conf$removeSampler('rho')
-conf$addSampler(target = 'rho', type = 'slice')
-conf$removeSampler('kappa')
-conf$addSampler(target = 'kappa', type = 'slice')
+conf2$removeSampler('rho')
+conf2$addSampler(target = 'rho', type = 'slice')
+conf2$removeSampler('kappa')
+conf2$addSampler(target = 'kappa', type = 'slice')
 
 # Build and compile MCMC
-Rmcmc <- buildMCMC(conf)
-Cmodel <- compileNimble(model)
-Cmcmc  <- compileNimble(Rmcmc, project = Cmodel)
+Rmcmc2 <- buildMCMC(conf2)
+Cmodel2 <- compileNimble(model2)
+Cmcmc2  <- compileNimble(Rmcmc2, project = Cmodel2)
 
 # Run MCMC
 niter   <- 20000
 nburnin <- 5000
 thin    <- 10
-samples <- runMCMC(Cmcmc, 
+samples1 <- runMCMC(Cmcmc2, 
                    niter = niter, 
                    nburnin = nburnin, 
                    thin = thin, 
                    nchains = 3, 
                    samplesAsCodaMCMC = TRUE)
 
-# Diagnostics and summaries
-print(summary(samples))
-autocorr.plot(samples)
-mcmc_diag <- as.mcmc(samples)
-print(gelman.diag(mcmc_diag))
-eff_sizes <- effectiveSize(mcmc_diag)
-print(eff_sizes)
+# Traceplots
+traceplot(as.mcmc.list(samples2))
 
-# Posterior summaries for rho and kappa
-rho_post   <- samples[,'rho']
-kappa_post <- samples[,'kappa']
-cat('Posterior mean rho:', mean(rho_post), '\n')
-cat('Posterior mean sigma2:', mean(1/kappa_post), '\n')
 
 # Save samples for downstream analysis
-save(samples, file = 'model_fit_samples.RData')
-cat('Model fitting complete. Samples saved to model_fit_samples.RData\n')
+save(samples2, file = 'model_fit_samples2.RData')
+cat('Model fitting complete. Samples saved to model_fit_samples2.RData\n')
+
+
 ```
 
 
