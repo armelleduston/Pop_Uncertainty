@@ -78,15 +78,17 @@ Where $\eta$ is a pre-specified discripancy parameter which controls how far off
 \subsection{Plan}
 
 \begin{enumerate}
-    \item Simulate data according to the model above including spatial correlation, noise injection, and benchmarking
+    \item Generate data according to the model above including spatial correlation, noise injection, and benchmarking
 
-    \item Assume simple spatial model
+    \item Build and run model on simulated data 
+    \begin{itemize}
+        \item using NIMBLE
+        \item 
+    \end{itemize}
 
-    \item Assume spatial model + noise injection 
+    \item Build simulation pipeline using cluster 
 
-    \item Assume spatial model + noise injection + benchmarking
-
-    \item Evaluate performance using 
+    \item Run simulation (1000x?) and evaluate performance using 
     \begin{itemize}
         \item bias
         \item variance
