@@ -356,8 +356,7 @@ constants2 <- list(
   J = J, # length of region_id
   M = M, # pre-computed for dcar_proper
   C = C, # pre-computed for dcar_proper
-  region_id = region_id, # regions to benchmark to 
-  ind_mat = indicator
+  ind_mat = indicator # to sum counts for benchmarking
 )
 
 data2 <- list(
@@ -430,7 +429,7 @@ conf2  <- configureMCMC(model2)
 conf2$removeSampler('rho')
 conf2$addSampler(target = 'rho', type = 'slice')
 conf2$removeSampler('log_kappa')
-conf2$addSampler(target = 'log_kappa', type = 'slice', adaptInterval = 1000)
+conf2$addSampler(target = 'log_kappa', type = 'slice')
 conf2$addMonitors(c("S", "P"))
 
 
