@@ -150,6 +150,8 @@ legend("topright",
 
 ## Spatial-only Bayesian Model
 
+Get just the spatial piece working
+
 ```{r spatial_only}
 
 # Prepare inputs for NIMBLE
