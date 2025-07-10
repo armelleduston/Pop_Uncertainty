@@ -15,13 +15,14 @@ library(nimbleNoBounds)
 library(pracma)
 library(extraDistr)
 
-complete_model <- function(sim_data){
+complete_model <- function(sim_data, exact){
   # Prepare inputs for NIMBLE
   n         <- length(sim_data$S)
   neighbors <- lapply(1:n, function(i) which(sim_data$W[i, ] == 1))
   num  <- sapply(neighbors, length)
   adj <- unlist(neighbors)
   mu <- rep(0, n)
+  eta <- 1
   L <- length(adj)
   M <- CAR_calcM(num)
   C <- CAR_calcC(adj, num)
@@ -37,7 +38,8 @@ complete_model <- function(sim_data){
     adj = adj, # adjacency matrix in vector form
     num = num, # number of neighbors
     tau = sim_data$tau, # privacy budget param
-    mu = mu, # explicitely give mu = 0
+    mu = mu, # explicitly give mu = 0
+    eta = eta, # discrepancy parameter
     L = L, # length of adj
     J = J, # length of region_id
     M = M, # pre-computed for dcar_proper
@@ -98,11 +100,21 @@ complete_model <- function(sim_data){
     }
     
     #### Exact benchmarking to higher-level totals ---------------------------
-    for (j in 1:J) {
-      # Use constrained values for benchmarking
-      U_sum[j] <- inprod(Pstar_constrained[1:n], ind_mat[j, 1:n])
-      
-      ones_u[j] ~ dconstraint(U_sum[j] == U_obs[j])
+    
+    # Use constrained values for benchmarking
+    
+    if (exact == TRUE){
+      for (j in 1:J) {
+        U_sum[j] <- inprod(Pstar_constrained[1:n], ind_mat[j, 1:n])
+        ones_u[j] ~ dconstraint(U_sum[j] == U_obs[j])
+      }
+    }
+    if (exact == FALSE){
+      # inexact benchmarking via Poisson prior
+      for (j in 1:J) {
+        U_sum[j] <- inprod(Pstar_constrained[1:n], ind_mat[j, 1:n])
+        U_obs[j]  ~ dpois(eta * U_sum[j])
+      }
     }
   })
   

@@ -132,13 +132,90 @@ effectiveSize(as.mcmc.list(samples1)[, c("rho", "log_kappa", "S[1]", "S[25]", "S
 ```
 
 
+
 ## Spatial + DP noise + benchmarking Bayesian Model
+
 
 ```{r ddlaplace_nimble_function}
 
+# Define the ddlaplace_nim distribution for NIMBLE
+ddlaplace_nim <- nimbleFunction(
+  run = function(x = double(0), 
+                 mu = double(0), 
+                 tau = double(0), 
+                 log = integer(0, default = 0)) {
+    returnType(double(0))
+    
+    # Parameter checks
+    if(tau <= 0) return(NaN)
+    
+    # Calculate lambda parameter (lambda = exp(-1/tau))
+    lambda <- exp(-1/tau)
+    
+    # Calculate normalization constant
+    c <- (1 - lambda) / (1 + lambda)
+    
+    # Calculate PMF
+    logProb <- log(c) + abs(x - mu) * log(lambda)
+    
+    # Return log or natural probability
+    if(log) return(logProb)
+    else return(exp(logProb))
+  }
+)
+
+# Define the simulation function without using rgeom
+rdlaplace_nim <- nimbleFunction(
+  run = function(n = integer(0), mu = double(0), tau = double(0)) {
+    returnType(double(0))
+    
+    # Parameter check
+    if(tau <= 0) return(NaN)
+    if(n != 1) stop("rdlaplace_nim only handles n = 1")
+    
+    # Calculate lambda
+    lambda <- exp(-1/tau)
+    
+    # Probability of X <= mu
+    p_leq_mu <- 1 / (1 + lambda)
+    
+    # Decide direction using uniform random number
+    u <- runif(1)
+    if(u < p_leq_mu) {
+      # X <= mu (including equality)
+      # Instead of using rgeom, implement geometric sampling directly
+      v <- runif(1)
+      # Convert uniform to geometric: k = floor(log(v) / log(lambda))
+      k <- floor(log(v) / log(1 - lambda))
+      return(mu - k)
+    } else {
+      # X > mu
+      v <- runif(1)
+      # Convert uniform to geometric: k = floor(log(v) / log(lambda))
+      k <- floor(log(v) / log(1 - lambda))
+      return(mu + k + 1)
+    }
+  }
+)
+
+# Register the distribution with NIMBLE
+registerDistributions(list(
+  ddlaplace_nim = list(
+    BUGSdist = "ddlaplace_nim(mu, tau)",
+    discrete = TRUE,
+    types = c('value = double(0)', 'mu = double(0)', 'tau = double(0)'),
+    pqAvail = FALSE,
+    range = c(-Inf, Inf)
+  )
+))
+```
+
+### Complete model with exact benchmarking
+
+```{r exact_bench}
 source("src/complete_model.r")
 
-samples2 <- complete_model(sim_data)
+samples2 <- complete_model(sim_data, exact = TRUE)
 
 # Diagnostics
 traceplot(as.mcmc.list(samples2)[, c("rho", "log_kappa", 
@@ -155,6 +232,28 @@ effectiveSize(as.mcmc.list(samples2)[, c("rho", "log_kappa",
 
 ```
 
+### Complete model with inexact benchmarking
+
+```{r}
+
+samples3 <- complete_model(sim_data, exact = FALSE)
+
+# Diagnostics
+traceplot(as.mcmc.list(samples3)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")])
+
+gelman.diag(as.mcmc.list(samples3)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")], 
+            autoburnin = FALSE)
+effectiveSize(as.mcmc.list(samples3)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")])
+
+
+```
+
 
 ## Model Evaluation 
 
@@ -164,21 +263,31 @@ Compare modeled vs true P's
 
 true_Ps <- sim_data$P
 obs_Ps <- sim_data$P_star
-modeled_Ps <- samples2$chain1[,paste0("P[", 1:100, "]")]
+modeled_Ps_exact <- samples2$chain1[,paste0("P[", 1:100, "]")]
+modeled_Ps_inexact <- samples3$chain1[,paste0("P[", 1:100, "]")]
 
 # posterior median = observed? (if yes rmse's equal)
 rmserr(true_Ps, obs_Ps)$rmse
-rmserr(true_Ps, apply(X=modeled_Ps, MARGIN=2 , FUN=median))$rmse
+rmserr(true_Ps, apply(X=modeled_Ps_exact, MARGIN=2 , FUN=median))$rmse
+rmserr(true_Ps, apply(X=modeled_Ps_inexact, MARGIN=2 , FUN=median))$rmse
 
 # 95% CI coverage
-CIs <- apply(X=modeled_Ps, MARGIN=2 , 
+CIs_exact <- apply(X=modeled_Ps_exact, MARGIN=2 , 
       FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
 
-sum(ifelse(true_Ps >= CIs[1,] & true_Ps <= CIs[2,], 1, 0))/100
+print("Exact benchmarking coverage")
+sum(ifelse(true_Ps >= CIs_exact[1,] & true_Ps <= CIs_exact[2,], 1, 0))/100
+
+CIs_inexact <- apply(X=modeled_Ps_inexact, MARGIN=2 , 
+      FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
+
+print("Inexact benchmarking coverage")
+sum(ifelse(true_Ps >= CIs_inexact[1,] & true_Ps <= CIs_inexact[2,], 1, 0))/100
 
 
 ```
 
+#### INEXACT BENCHMARKING NOT WORKING ######
 
 
 ## Questions
