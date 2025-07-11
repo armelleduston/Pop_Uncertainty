@@ -91,13 +91,11 @@ complete_model <- function(sim_data, exact){
     #### Measurement model: direct discrete Laplace noise --------------------
     for (i in 1:n) {
       # Directly sample from discrete Laplace 
-      Pstar_obs[i] ~ ddlaplace_nim(P[i], tau)
+      Pstar_obs[i] ~ ddlaplace_nim(P[i], tau) # add >= 0 constraint? 
       
     }
     
     #### Exact benchmarking to higher-level totals ---------------------------
-    
-    # Use constrained values for benchmarking
     
     if (exact == TRUE){
       for (j in 1:J) {
@@ -105,8 +103,8 @@ complete_model <- function(sim_data, exact){
         ones_u[j] ~ dconstraint(U_sum[j] == U_obs[j])
       }
     }
+    
     if (exact == FALSE){
-      # inexact benchmarking via Poisson prior
       for (j in 1:J) {
         U_sum[j] <- inprod(Pstar_obs[1:n], ind_mat[j, 1:n])
         U_obs[j]  ~ dpois(eta * U_sum[j])
