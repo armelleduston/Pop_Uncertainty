@@ -50,9 +50,9 @@ if (rstudioapi::isAvailable()) {
 
 source("src/generate_data.r")
 
-n <- 100 # number of points
+n <- 200 # number of points
 rho <- 0.7 # spatial correlation       
-kappa <- 1.5 # scalar precision of the Gaussian CAR prior
+kappa <- 1.5 # precision scaling variable (for CAR)
 tau <- 0.25 # related to census privacy budget     
 J <- 10  # number of regions
 
@@ -107,8 +107,23 @@ legend("topright",
        bty    = "n")
 
 
-```
+# Color nodes by latent log‐intensity S
+S_vals <- sim_data$S
+# build a 100‐step palette
+pal_S <- colorRampPalette(c("blue","white","red"))(100)
+# cut S into 100 bins
+S_cols <- pal_S[ cut(S_vals, breaks=100, include.lowest=TRUE) ]
 
+plot(g,
+     layout       = layout_ij,
+     vertex.size  = 6,
+     vertex.color = S_cols,
+     vertex.label = NA,
+     edge.color   = "grey80",
+     main         = "Adjacency graph colored by latent log-intensity")
+
+
+```
 
 
 ## Spatial-only Bayesian Model
@@ -135,6 +150,8 @@ effectiveSize(as.mcmc.list(samples1)[, c("rho", "log_kappa", "S[1]", "S[25]", "S
 
 ## Spatial + DP noise + benchmarking Bayesian Model
 
+### Write discrete laplace function
+Rather than injecting laplace noise and rounding, simply use discrete laplace (is this reasonable?)
 
 ```{r ddlaplace_nimble_function}
 
@@ -208,6 +225,8 @@ registerDistributions(list(
     range = c(-Inf, Inf)
   )
 ))
+
+
 ```
 
 ### Complete model with exact benchmarking
@@ -229,6 +248,8 @@ gelman.diag(as.mcmc.list(samples2)[, c("rho", "log_kappa",
 effectiveSize(as.mcmc.list(samples2)[, c("rho", "log_kappa", 
                                      "S[1]", "S[5]", "S[50]", 
                                      "P[1]", "P[5]", "P[50]")])
+
+
 
 ```
 
@@ -263,8 +284,8 @@ Compare modeled vs true P's
 
 true_Ps <- sim_data$P
 obs_Ps <- sim_data$P_star
-modeled_Ps_exact <- samples2$chain1[,paste0("P[", 1:100, "]")]
-modeled_Ps_inexact <- samples3$chain1[,paste0("P[", 1:100, "]")]
+modeled_Ps_exact <- samples2$chain1[,paste0("P[", 1:200, "]")]
+modeled_Ps_inexact <- samples3$chain1[,paste0("P[", 1:200, "]")]
 
 # posterior median = observed? (if yes rmse's equal)
 rmserr(true_Ps, obs_Ps)$rmse
@@ -276,20 +297,22 @@ CIs_exact <- apply(X=modeled_Ps_exact, MARGIN=2 ,
       FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
 
 print("Exact benchmarking coverage")
-sum(ifelse(true_Ps >= CIs_exact[1,] & true_Ps <= CIs_exact[2,], 1, 0))/100
+sum(ifelse(true_Ps >= CIs_exact[1,] & true_Ps <= CIs_exact[2,], 1, 0))/200
 
 CIs_inexact <- apply(X=modeled_Ps_inexact, MARGIN=2 , 
       FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
 
 print("Inexact benchmarking coverage")
-sum(ifelse(true_Ps >= CIs_inexact[1,] & true_Ps <= CIs_inexact[2,], 1, 0))/100
+sum(ifelse(true_Ps >= CIs_inexact[1,] & true_Ps <= CIs_inexact[2,], 1, 0))/200
 
 
 ```
 
-#### INEXACT BENCHMARKING NOT WORKING ######
-
-
 ## Questions
-- Appropriate to sample using discrete laplace? Or better to use laplace and then round? 
+- Appropriate to sample using truncated discrete laplace? Or better to use regular laplace and then round and clamp? 
 - Does the constraint approach make sense? 
+- How does including the benchmarking step make sense/change anything? The observed P* are already benchmarked so they will always sum up appropriately, right? U's and P*'s are both observed (right??) so they won't change
+- How would I implement inexact benchmarking when the P*'s and Uj's are already integers? (similar to above question)
+- Traceplots and convergence checks are not consistently good, how to proceed? (some runs, if data generation is conveneient it works well, other times no)
+- Cluster access for full simulation study? 
+

@@ -15,6 +15,7 @@ library(nimbleNoBounds)
 library(pracma)
 library(extraDistr)
 
+
 complete_model <- function(sim_data, exact){
   # Prepare inputs for NIMBLE
   n         <- length(sim_data$S)
@@ -22,7 +23,7 @@ complete_model <- function(sim_data, exact){
   num  <- sapply(neighbors, length)
   adj <- unlist(neighbors)
   mu <- rep(0, n)
-  eta <- 1
+  eta <- 0.5
   L <- length(adj)
   M <- CAR_calcM(num)
   C <- CAR_calcC(adj, num)
@@ -90,13 +91,8 @@ complete_model <- function(sim_data, exact){
     #### Measurement model: direct discrete Laplace noise --------------------
     for (i in 1:n) {
       # Directly sample from discrete Laplace 
-      Pstar[i] ~ ddlaplace_nim(P[i], tau)
+      Pstar_obs[i] ~ ddlaplace_nim(P[i], tau)
       
-      # Enforce non-negativity 
-      Pstar_constrained[i] <- max(0, Pstar[i])
-      
-      # Enforce that the edited value equals the published count
-      ones_p[i] ~ dconstraint(Pstar_constrained[i] == Pstar_obs[i])
     }
     
     #### Exact benchmarking to higher-level totals ---------------------------
@@ -105,14 +101,14 @@ complete_model <- function(sim_data, exact){
     
     if (exact == TRUE){
       for (j in 1:J) {
-        U_sum[j] <- inprod(Pstar_constrained[1:n], ind_mat[j, 1:n])
+        U_sum[j] <- inprod(Pstar_obs[1:n], ind_mat[j, 1:n])
         ones_u[j] ~ dconstraint(U_sum[j] == U_obs[j])
       }
     }
     if (exact == FALSE){
       # inexact benchmarking via Poisson prior
       for (j in 1:J) {
-        U_sum[j] <- inprod(Pstar_constrained[1:n], ind_mat[j, 1:n])
+        U_sum[j] <- inprod(Pstar_obs[1:n], ind_mat[j, 1:n])
         U_obs[j]  ~ dpois(eta * U_sum[j])
       }
     }
