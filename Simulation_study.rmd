@@ -284,13 +284,13 @@ Compare modeled vs true P's
 
 true_Ps <- sim_data$P
 obs_Ps <- sim_data$P_star
-modeled_Ps_exact <- samples2$chain1[1,paste0("P[", 1:200, "]")]
-modeled_Ps_inexact <- samples3$chain1[1,paste0("P[", 1:200, "]")]
+modeled_Ps_exact <- cbind(samples2$chain1[1,paste0("P[", 1:200, "]")])
+modeled_Ps_inexact <- cbind(samples3$chain1[1,paste0("P[", 1:200, "]")])
 
 # posterior median = observed? (if yes rmse's equal)
-rmserr(true_Ps, obs_Ps)$rmse
-rmserr(true_Ps, apply(X=modeled_Ps_exact, MARGIN=2 , FUN=median))$rmse
-rmserr(true_Ps, apply(X=modeled_Ps_inexact, MARGIN=2 , FUN=median))$rmse
+rmserr(true_Ps, obs_Ps)$rmse 
+rmserr(true_Ps, apply(X=modeled_Ps_exact, MARGIN=1 , FUN=median))$rmse
+rmserr(true_Ps, apply(X=modeled_Ps_inexact, MARGIN=1 , FUN=median))$rmse
 
 # 95% CI coverage
 CIs_exact <- apply(X=modeled_Ps_exact, MARGIN=2 , 
@@ -310,10 +310,8 @@ sum(ifelse(true_Ps >= CIs_inexact[1,] & true_Ps <= CIs_inexact[2,], 1, 0))/200
 
 ## Questions
 - Appropriate to sample using discrete laplace? Or better to use regular laplace and then round and clamp? 
-  - Is the >= 0 constraint necessary? 
-- Does the constraint approach make sense? 
 - How does including the benchmarking step make sense/change anything? The observed P* are already benchmarked so they will always sum up appropriately, right? U's and P*'s are both observed (right??) so they won't change
 - How would I implement inexact benchmarking when the P*'s and Uj's are already integers? (similar to above question)
-- Traceplots and convergence checks are not consistently good, how to proceed? (some runs, if data generation is conveneient it works well, other times no)
+- Traceplots and convergence checks are not consistently good, how to proceed? (some runs, if data generation is convenient it works well, other times no)
 - Cluster access for full simulation study? 
 - Where to find tau? (privacy budget parameter)
