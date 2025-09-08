@@ -27,7 +27,6 @@ library(igraph)
 library(RColorBrewer)
 library(nimbleNoBounds)
 library(pracma)
-library(extraDistr)
 
 ### ggplot theme
 theme_set(theme_bw() +
@@ -107,20 +106,20 @@ legend("topright",
        bty    = "n")
 
 
-# Color nodes by latent log‐intensity S
-S_vals <- sim_data$S
-# build a 100‐step palette
-pal_S <- colorRampPalette(c("blue","white","red"))(100)
-# cut S into 100 bins
-S_cols <- pal_S[ cut(S_vals, breaks=100, include.lowest=TRUE) ]
-
-plot(g,
-     layout       = layout_ij,
-     vertex.size  = 6,
-     vertex.color = S_cols,
-     vertex.label = NA,
-     edge.color   = "grey80",
-     main         = "Adjacency graph colored by latent log-intensity")
+# # Color nodes by latent log‐intensity S
+# S_vals <- sim_data$S
+# # build a 100‐step palette
+# pal_S <- colorRampPalette(c("blue","white","red"))(100)
+# # cut S into 100 bins
+# S_cols <- pal_S[ cut(S_vals, breaks=100, include.lowest=TRUE) ]
+# 
+# plot(g,
+#      layout       = layout_ij,
+#      vertex.size  = 6,
+#      vertex.color = S_cols,
+#      vertex.label = NA,
+#      edge.color   = "grey80",
+#      main         = "Adjacency graph colored by latent log-intensity")
 
 
 ```
@@ -132,17 +131,17 @@ Get just the spatial piece working
 
 ```{r spatial_only}
 
-source("src/spatial_only.r")
-
-samples1 <- spatial_only(sim_data)
-
-# Diagnostics
-traceplot(as.mcmc.list(samples1)[, c("rho", "log_kappa", "S[1]", "S[25]", "S[50]")])
-
-gelman.diag(as.mcmc.list(samples1)[, c("rho", "log_kappa", "S[1]", "S[25]", "S[50]")], 
-            autoburnin = FALSE)
-effectiveSize(as.mcmc.list(samples1)[, c("rho", "log_kappa", "S[1]", "S[25]", "S[50]")])
-  
+# source("src/spatial_only.r")
+# 
+# samples1 <- spatial_only(sim_data)
+# 
+# # Diagnostics
+# traceplot(as.mcmc.list(samples1)[, c("rho", "log_kappa", "S[1]", "S[25]", "S[50]")])
+# 
+# gelman.diag(as.mcmc.list(samples1)[, c("rho", "log_kappa", "S[1]", "S[25]", "S[50]")], 
+#             autoburnin = FALSE)
+# effectiveSize(as.mcmc.list(samples1)[, c("rho", "log_kappa", "S[1]", "S[25]", "S[50]")])
+#   
   
 ```
 
@@ -234,7 +233,9 @@ registerDistributions(list(
 ```{r exact_bench}
 source("src/complete_model.r")
 
+tic()
 samples2 <- complete_model(sim_data, exact = TRUE)
+toc()
 
 # Diagnostics
 traceplot(as.mcmc.list(samples2)[, c("rho", "log_kappa", 

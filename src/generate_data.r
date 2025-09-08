@@ -18,7 +18,7 @@ library(extraDistr)
 
 generate_data <- function(n, rho, kappa, tau, J){
   
-  # 1. Define a random web of connections (Erdős–Rényi, mean degree ≈4), enforce connectivity
+  # 1. Define a random web of connections, enforce connectivity
   repeat {
     g <- sample_gnp(n, p = 4/(n-1), directed = FALSE, loops = FALSE)
     if (is.connected(g)) break
@@ -26,7 +26,7 @@ generate_data <- function(n, rho, kappa, tau, J){
   W <- as.matrix(as_adjacency_matrix(g))
   D <- diag(rowSums(W))
   
-  # 2. Simulate latent spatial field S with (proper) CAR structure
+  # 2. Simulate spatial field S with (proper) CAR structure
   
   # Construct precision matrix
   Q <- kappa * (D - rho * W)
