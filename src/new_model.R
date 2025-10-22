@@ -16,7 +16,7 @@ library(pracma)
 library(extraDistr)
 
 
-complete_model <- function(sim_data, exact){
+new_model <- function(sim_data, exact){
   # Prepare inputs for NIMBLE
   n         <- length(sim_data$S)
   neighbors <- lapply(1:n, function(i) which(sim_data$W[i, ] == 1))
@@ -89,24 +89,22 @@ complete_model <- function(sim_data, exact){
     }
     
     #### Measurement model: direct discrete Laplace noise --------------------
-    for (i in 1:n) {
-      # Directly sample from discrete Laplace 
-      Pstar_obs[i] ~ ddlaplace_nim(P[i], tau) # add >= 0 constraint? 
-      
+    for (i in 1:n) { 
+      Pstar_obs[i] ~ dnorm(P[i], tau)
     }
     
     #### Exact benchmarking to higher-level totals ---------------------------
     
     if (exact == TRUE){
       for (j in 1:J) {
-        U_sum[j] <- inprod(Pstar_obs[1:n], ind_mat[j, 1:n])
+        U_sum[j] <- inprod(P[1:n], ind_mat[j, 1:n])
         ones_u[j] ~ dconstraint(U_sum[j] == U_obs[j])
       }
     }
     
     if (exact == FALSE){
       for (j in 1:J) {
-        U_sum[j] <- inprod(Pstar_obs[1:n], ind_mat[j, 1:n])
+        U_sum[j] <- inprod(P[1:n], ind_mat[j, 1:n])
         U_obs[j]  ~ dpois(eta * U_sum[j])
       }
     }

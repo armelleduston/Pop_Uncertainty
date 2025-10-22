@@ -49,7 +49,7 @@ if (rstudioapi::isAvailable()) {
 
 source("src/generate_data.r")
 
-n <- 200 # number of points
+n <- 100 # number of points
 rho <- 0.7 # spatial correlation       
 kappa <- 1.5 # precision scaling variable (for CAR)
 tau <- 0.25 # related to census privacy budget     
@@ -258,18 +258,22 @@ effectiveSize(as.mcmc.list(samples2)[, c("rho", "log_kappa",
 
 ```{r}
 
-samples3 <- complete_model(sim_data, exact = FALSE)
+source("src/new_model.R")
+
+tic()
+samples3 <- new_model(sim_data, exact = FALSE)
+toc()
 
 # Diagnostics
-traceplot(as.mcmc.list(samples3)[, c("rho", "log_kappa", 
+traceplot(as.mcmc.list(samples2)[, c("rho", "log_kappa", 
                                      "S[1]", "S[5]", "S[50]", 
                                      "P[1]", "P[5]", "P[50]")])
 
-gelman.diag(as.mcmc.list(samples3)[, c("rho", "log_kappa", 
+gelman.diag(as.mcmc.list(samples2)[, c("rho", "log_kappa", 
                                      "S[1]", "S[5]", "S[50]", 
                                      "P[1]", "P[5]", "P[50]")], 
             autoburnin = FALSE)
-effectiveSize(as.mcmc.list(samples3)[, c("rho", "log_kappa", 
+effectiveSize(as.mcmc.list(samples2)[, c("rho", "log_kappa", 
                                      "S[1]", "S[5]", "S[50]", 
                                      "P[1]", "P[5]", "P[50]")])
 
@@ -285,26 +289,27 @@ Compare modeled vs true P's
 
 true_Ps <- sim_data$P
 obs_Ps <- sim_data$P_star
-modeled_Ps_exact <- cbind(samples2$chain1[1,paste0("P[", 1:200, "]")])
-modeled_Ps_inexact <- cbind(samples3$chain1[1,paste0("P[", 1:200, "]")])
+modeled_Ps_exact <- cbind(samples2$chain1[,paste0("P[", 1:100, "]")])
+modeled_Ps_inexact <- cbind(samples3$chain1[,paste0("P[", 1:100, "]")])
 
 # posterior median = observed? (if yes rmse's equal)
 rmserr(true_Ps, obs_Ps)$rmse 
-rmserr(true_Ps, apply(X=modeled_Ps_exact, MARGIN=1 , FUN=median))$rmse
-rmserr(true_Ps, apply(X=modeled_Ps_inexact, MARGIN=1 , FUN=median))$rmse
+rmserr(true_Ps, apply(X=modeled_Ps_exact, MARGIN=2 , FUN=median))$rmse
+rmserr(true_Ps, apply(X=modeled_Ps_inexact, MARGIN=2 , FUN=median))$rmse
 
 # 95% CI coverage
 CIs_exact <- apply(X=modeled_Ps_exact, MARGIN=2 , 
       FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
 
-print("Exact benchmarking coverage")
-sum(ifelse(true_Ps >= CIs_exact[1,] & true_Ps <= CIs_exact[2,], 1, 0))/200
+print("No benchmarking coverage")
+sum(ifelse(true_Ps >= CIs_exact[1,] & true_Ps <= CIs_exact[2,], 1, 0))/100
 
 CIs_inexact <- apply(X=modeled_Ps_inexact, MARGIN=2 , 
       FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
 
-print("Inexact benchmarking coverage")
-sum(ifelse(true_Ps >= CIs_inexact[1,] & true_Ps <= CIs_inexact[2,], 1, 0))/200
+print("Inexact benchmarking (new model) coverage")
+sum(ifelse(true_Ps >= CIs_inexact[1,] & true_Ps <= CIs_inexact[2,], 1, 0))/100
+
 
 
 ```
