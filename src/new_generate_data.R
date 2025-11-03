@@ -16,7 +16,7 @@ library(pracma)
 library(extraDistr)
 
 
-generate_data <- function(n, rho, kappa, tau, J){
+new_generate_data <- function(n, rho, kappa, tau, J){
   
   # 1. Define a random web of connections, enforce connectivity
   repeat {
@@ -39,14 +39,27 @@ generate_data <- function(n, rho, kappa, tau, J){
   
   # 3. Simulate true counts P_i ~ Poisson(exp(S_i))
   
+  prob_rural <- plogis(-S)  # Convert S to probabilities using logistic function
+  is_rural <- rbinom(n, 1, prob_rural)
+  
+  # Generate base population sizes
+  base_pop <- numeric(n)
+  
+  # Rural counties
+  rural_indices <- which(is_rural == 1)
+  base_pop[rural_indices] <- rlnorm(length(rural_indices), 9.9, 0.55)
+  
+  # Urban counties
+  urban_indices <- which(is_rural == 0)
+  base_pop[urban_indices] <- rlnorm(length(urban_indices), 12.5, 0.85)
+  
   # Apply spatial effect
-  lambda <- exp(S)
+  lambda <- base_pop * exp(S)
   P <- rpois(n, lambda)
-    
+  
   # 4. Add measurement noise: P*_i | P_i ~ Laplace(P_i, tau)
   P_star <- round(P + rnorm(n, mean = 0, sd=tau))
   P_star <- ifelse(P_star < 0, 0, P_star) 
-  
   
   # 5. Define coarse regions and benchmark totals U_j
   region_id <- sample(1:J, n, replace = TRUE)
@@ -67,8 +80,3 @@ generate_data <- function(n, rho, kappa, tau, J){
   
   return (sim_data)
 }
-
-
-
-
-

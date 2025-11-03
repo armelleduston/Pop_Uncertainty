@@ -16,14 +16,14 @@ library(pracma)
 library(extraDistr)
 
 
-complete_model <- function(sim_data, exact){
+new_data_model <- function(sim_data, bench){
   # Prepare inputs for NIMBLE
   n         <- length(sim_data$S)
   neighbors <- lapply(1:n, function(i) which(sim_data$W[i, ] == 1))
   num  <- sapply(neighbors, length)
   adj <- unlist(neighbors)
   mu <- rep(0, n)
-  eta <- 0.5
+  eta <- 0.1
   L <- length(adj)
   M <- CAR_calcM(num)
   C <- CAR_calcC(adj, num)
@@ -31,6 +31,10 @@ complete_model <- function(sim_data, exact){
   J         <- length(unique(region_id))
   indicator <- matrix(0, J, n)
   for (j in 1:J) indicator[j, ] <- as.numeric(region_id == j)
+  mu_r = 9.9
+  mu_u = 12.5
+  sigma_r = 0.55
+  sigma_u = 0.85
   
   
   # Bundle constants
@@ -45,7 +49,11 @@ complete_model <- function(sim_data, exact){
     J = J, # length of region_id
     M = M, # pre-computed for dcar_proper
     C = C, # pre-computed for dcar_proper
-    ind_mat = indicator # to sum counts for benchmarking
+    ind_mat = indicator, # to sum counts for benchmarking
+    mu_r = mu_r, # rural mean
+    mu_u = mu_u, # urban mean
+    sigma_r = sigma_r, # rural sd
+    sigma_u = sigma_u # urban sd
   )
   
   data <- list(
@@ -59,10 +67,12 @@ complete_model <- function(sim_data, exact){
   # Initial values
   inits <- list(
     S           = rnorm(n, 0, 1),
-    P           = pmax(sim_data$P_star, 1), 
-    Pstar       = sim_data$P_star,
+    P           = pmax(sim_data$P_star, 1),
     rho         = 0.5,
-    log_kappa   = 0
+    log_kappa   = 0,
+    p           = 0.5,
+    r           = rep(1, n),
+    log_base_p  = rep(log(50000), n)
   )
   
   # Define the model 
@@ -72,6 +82,7 @@ complete_model <- function(sim_data, exact){
     rho   ~ dunif(0, 1)
     log_kappa ~ dLogInvgamma(.001, .001)
     kappa <- exp(log_kappa)
+    p ~ dbeta(1,1)
     
     #### Spatial random effects (proper CAR) ----------------------------------
     S[1:n] ~ dcar_proper(
@@ -84,30 +95,31 @@ complete_model <- function(sim_data, exact){
       C     = C[1:L])
     
     #### Process model: true counts ------------------------------------------
+    
     for (i in 1:n) {
-      P[i] ~ dpois(exp(S[i]))
+      r[i] ~ dbern(p)
+      
+      log_base_p[i] ~ dnorm(r[i]*mu_r + (1-r[i])*mu_u, 
+                            r[i]*sigma_r + (1-r[i])*sigma_u)
+      base_p[i] <- exp(log_base_p[i])
+      
+      P[i] ~ dpois(base_p[i]*exp(S[i]))
     }
     
-    #### Measurement model: direct discrete Gaussian noise --------------------
-    for (i in 1:n) {
-      Pstar_obs[i] ~ dnorm(P[i], tau) 
+    #### Measurement model: direct discrete Laplace noise --------------------
+    for (i in 1:n) { 
+      Pstar_obs[i] ~ droundnorm(P[i], tau)
     }
     
     #### Exact benchmarking to higher-level totals ---------------------------
     
-    if (exact == TRUE){
+    if (bench == TRUE){
       for (j in 1:J) {
-        U_sum[j] <- inprod(Pstar_obs[1:n], ind_mat[j, 1:n])
+        U_sum[j] <- inprod(P[1:n], ind_mat[j, 1:n])
         ones_u[j] ~ dconstraint(U_sum[j] == U_obs[j])
       }
     }
     
-    if (exact == FALSE){
-      for (j in 1:J) {
-        U_sum[j] <- inprod(Pstar_obs[1:n], ind_mat[j, 1:n])
-        U_obs[j]  ~ dpois(eta * U_sum[j])
-      }
-    }
   })
   
   # Build and compile the model
@@ -133,18 +145,13 @@ complete_model <- function(sim_data, exact){
   nburnin <- 7500
   thin    <- 1
   samples <- runMCMC(Cmcmc, 
-                      niter = niter, 
-                      nburnin = nburnin, 
-                      thin = thin, 
-                      nchains = 3, 
-                      samplesAsCodaMCMC = TRUE)
+                     niter = niter, 
+                     nburnin = nburnin, 
+                     thin = thin, 
+                     nchains = 3, 
+                     samplesAsCodaMCMC = TRUE)
   
   return (samples)
 }
-
-
-
-
-
 
 

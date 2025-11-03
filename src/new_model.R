@@ -16,14 +16,14 @@ library(pracma)
 library(extraDistr)
 
 
-new_model <- function(sim_data, exact){
+new_model <- function(sim_data, bench){
   # Prepare inputs for NIMBLE
   n         <- length(sim_data$S)
   neighbors <- lapply(1:n, function(i) which(sim_data$W[i, ] == 1))
   num  <- sapply(neighbors, length)
   adj <- unlist(neighbors)
   mu <- rep(0, n)
-  eta <- 0.5
+  eta <- 0.1
   L <- length(adj)
   M <- CAR_calcM(num)
   C <- CAR_calcC(adj, num)
@@ -90,24 +90,18 @@ new_model <- function(sim_data, exact){
     
     #### Measurement model: direct discrete Laplace noise --------------------
     for (i in 1:n) { 
-      Pstar_obs[i] ~ dnorm(P[i], tau)
+      Pstar_obs[i] ~ droundnorm(P[i], tau)
     }
     
     #### Exact benchmarking to higher-level totals ---------------------------
     
-    if (exact == TRUE){
+    if (bench == TRUE){
       for (j in 1:J) {
         U_sum[j] <- inprod(P[1:n], ind_mat[j, 1:n])
         ones_u[j] ~ dconstraint(U_sum[j] == U_obs[j])
       }
     }
     
-    if (exact == FALSE){
-      for (j in 1:J) {
-        U_sum[j] <- inprod(P[1:n], ind_mat[j, 1:n])
-        U_obs[j]  ~ dpois(eta * U_sum[j])
-      }
-    }
   })
   
   # Build and compile the model

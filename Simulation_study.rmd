@@ -106,26 +106,26 @@ legend("topright",
        bty    = "n")
 
 
-# # Color nodes by latent log‐intensity S
-# S_vals <- sim_data$S
-# # build a 100‐step palette
-# pal_S <- colorRampPalette(c("blue","white","red"))(100)
-# # cut S into 100 bins
-# S_cols <- pal_S[ cut(S_vals, breaks=100, include.lowest=TRUE) ]
-# 
-# plot(g,
-#      layout       = layout_ij,
-#      vertex.size  = 6,
-#      vertex.color = S_cols,
-#      vertex.label = NA,
-#      edge.color   = "grey80",
-#      main         = "Adjacency graph colored by latent log-intensity")
+# Color nodes by latent log‐intensity S
+S_vals <- sim_data$S
+# build a 100‐step palette
+pal_S <- colorRampPalette(c("blue","white","red"))(100)
+# cut S into 100 bins
+S_cols <- pal_S[ cut(S_vals, breaks=100, include.lowest=TRUE) ]
+
+plot(g,
+     layout       = layout_ij,
+     vertex.size  = 6,
+     vertex.color = S_cols,
+     vertex.label = NA,
+     edge.color   = "grey80",
+     main         = "Adjacency graph colored by latent log-intensity")
 
 
 ```
 
 
-## Spatial-only Bayesian Model
+### Spatial-only Bayesian Model
 
 Get just the spatial piece working
 
@@ -146,7 +146,6 @@ Get just the spatial piece working
 ```
 
 
-
 ## Spatial + DP noise + benchmarking Bayesian Model
 
 ### Write discrete laplace function
@@ -154,87 +153,146 @@ Rather than injecting laplace noise and rounding, simply use discrete laplace (i
 
 ```{r ddlaplace_nimble_function}
 
-# Define the ddlaplace_nim distribution for NIMBLE
-ddlaplace_nim <- nimbleFunction(
-  run = function(x = double(0), 
-                 mu = double(0), 
-                 tau = double(0), 
-                 log = integer(0, default = 0)) {
-    returnType(double(0))
-    
-    # Parameter checks
-    if(tau <= 0) return(NaN)
-    
-    # Calculate lambda parameter (lambda = exp(-1/tau))
-    lambda <- exp(-1/tau)
-    
-    # Calculate normalization constant
-    c <- (1 - lambda) / (1 + lambda)
-    
-    # Calculate PMF
-    logProb <- log(c) + abs(x - mu) * log(lambda)
-    
-    # Return log or natural probability
-    if(log) return(logProb)
-    else return(exp(logProb))
-  }
-)
-
-# Define the simulation function without using rgeom
-rdlaplace_nim <- nimbleFunction(
-  run = function(n = integer(0), mu = double(0), tau = double(0)) {
-    returnType(double(0))
-    
-    # Parameter check
-    if(tau <= 0) return(NaN)
-    if(n != 1) stop("rdlaplace_nim only handles n = 1")
-    
-    # Calculate lambda
-    lambda <- exp(-1/tau)
-    
-    # Probability of X <= mu
-    p_leq_mu <- 1 / (1 + lambda)
-    
-    # Decide direction using uniform random number
-    u <- runif(1)
-    if(u < p_leq_mu) {
-      # X <= mu (including equality)
-      # Instead of using rgeom, implement geometric sampling directly
-      v <- runif(1)
-      # Convert uniform to geometric: k = floor(log(v) / log(lambda))
-      k <- floor(log(v) / log(1 - lambda))
-      return(mu - k)
-    } else {
-      # X > mu
-      v <- runif(1)
-      # Convert uniform to geometric: k = floor(log(v) / log(lambda))
-      k <- floor(log(v) / log(1 - lambda))
-      return(mu + k + 1)
-    }
-  }
-)
-
-# Register the distribution with NIMBLE
-registerDistributions(list(
-  ddlaplace_nim = list(
-    BUGSdist = "ddlaplace_nim(mu, tau)",
-    discrete = TRUE,
-    types = c('value = double(0)', 'mu = double(0)', 'tau = double(0)'),
-    pqAvail = FALSE,
-    range = c(-Inf, Inf)
-  )
-))
+# # Define the ddlaplace_nim distribution for NIMBLE
+# ddlaplace_nim <- nimbleFunction(
+#   run = function(x = double(0), 
+#                  mu = double(0), 
+#                  tau = double(0), 
+#                  log = integer(0, default = 0)) {
+#     returnType(double(0))
+#     
+#     # Parameter checks
+#     if(tau <= 0) return(NaN)
+#     
+#     # Calculate lambda parameter (lambda = exp(-1/tau))
+#     lambda <- exp(-1/tau)
+#     
+#     # Calculate normalization constant
+#     c <- (1 - lambda) / (1 + lambda)
+#     
+#     # Calculate PMF
+#     logProb <- log(c) + abs(x - mu) * log(lambda)
+#     
+#     # Return log or natural probability
+#     if(log) return(logProb)
+#     else return(exp(logProb))
+#   }
+# )
+# 
+# # Define the simulation function without using rgeom
+# rdlaplace_nim <- nimbleFunction(
+#   run = function(n = integer(0), mu = double(0), tau = double(0)) {
+#     returnType(double(0))
+#     
+#     # Parameter check
+#     if(tau <= 0) return(NaN)
+#     if(n != 1) stop("rdlaplace_nim only handles n = 1")
+#     
+#     # Calculate lambda
+#     lambda <- exp(-1/tau)
+#     
+#     # Probability of X <= mu
+#     p_leq_mu <- 1 / (1 + lambda)
+#     
+#     # Decide direction using uniform random number
+#     u <- runif(1)
+#     if(u < p_leq_mu) {
+#       # X <= mu (including equality)
+#       # Instead of using rgeom, implement geometric sampling directly
+#       v <- runif(1)
+#       # Convert uniform to geometric: k = floor(log(v) / log(lambda))
+#       k <- floor(log(v) / log(1 - lambda))
+#       return(mu - k)
+#     } else {
+#       # X > mu
+#       v <- runif(1)
+#       # Convert uniform to geometric: k = floor(log(v) / log(lambda))
+#       k <- floor(log(v) / log(1 - lambda))
+#       return(mu + k + 1)
+#     }
+#   }
+# )
+# 
+# # Register the distribution with NIMBLE
+# registerDistributions(list(
+#   ddlaplace_nim = list(
+#     BUGSdist = "ddlaplace_nim(mu, tau)",
+#     discrete = TRUE,
+#     types = c('value = double(0)', 'mu = double(0)', 'tau = double(0)'),
+#     pqAvail = FALSE,
+#     range = c(-Inf, Inf)
+#   )
+# ))
 
 
 ```
 
+
+### Write NIMBLE distribution for rounded Normal
+
+```{r droundnorm_nimble_function}
+
+droundnorm <- nimbleFunction(
+  run = function(x = double(0), mu = double(0), sigma = double(0), log = integer(0)) {
+    returnType(double(0))
+    # Support: x must be (near) integer
+    if (abs(x - round(x)) > 1e-8) {
+      if (log == 1) return(-Inf)
+      return(0.0)
+    }
+    if (sigma <= 0) {
+      if (log == 1) return(-Inf)
+      return(0.0)
+    }
+    a <- (x - 0.5 - mu) / sigma
+    b <- (x + 0.5 - mu) / sigma
+    p <- pnorm(b, 0, 1) - pnorm(a, 0, 1)   # CDF difference
+    # Guard tiny probabilities to avoid log(0)
+    if (p <= 0) {
+      if (log == 1) return(-Inf)
+      return(0.0)
+    }
+    if (log == 1) return(log(p))
+    return(p)
+  }
+)
+
+# RNG: sample normal then round to nearest integer
+rroundnorm <- nimbleFunction(
+  run = function(n = integer(0), mu = double(0), sigma = double(0)) {
+    returnType(double(0))
+    if (n != 1) nimPrint("rroundnorm generates one value; ignoring n")
+    if (sigma <= 0) nimStop("sigma must be > 0")
+    z <- rnorm(1, mean = mu, sd = sigma)
+    return(round(z))
+  }
+)
+
+# Register for BUGS usage
+registerDistributions(list(
+  droundnorm = list(
+    BUGSdist = "droundnorm(mu, sigma)",
+    types    = c("value = double(0)", "mu = double(0)", "sigma = double(0)"),
+    discrete = TRUE
+  )
+))
+
+
+
+```
+
+
 ### Complete model with exact benchmarking
 
-```{r exact_bench}
-source("src/complete_model.r")
+(currently doesn't converge, maybe add a smarter sampler)
+
+```{r with_bench}
+source("src/new_model.r")
+
+# run model with (exact) benchmarking
 
 tic()
-samples2 <- complete_model(sim_data, exact = TRUE)
+samples2 <- new_model(sim_data, bench = TRUE)
 toc()
 
 # Diagnostics
@@ -256,24 +314,27 @@ effectiveSize(as.mcmc.list(samples2)[, c("rho", "log_kappa",
 
 ### Complete model with inexact benchmarking
 
-```{r}
+```{r without_bench}
 
-source("src/new_model.R")
+source("src/new_model.r")
+
+# run model without benchmarking
+
 
 tic()
-samples3 <- new_model(sim_data, exact = FALSE)
+samples3 <- new_model(sim_data, bench = FALSE)
 toc()
 
 # Diagnostics
-traceplot(as.mcmc.list(samples2)[, c("rho", "log_kappa", 
+traceplot(as.mcmc.list(samples3)[, c("rho", "log_kappa", 
                                      "S[1]", "S[5]", "S[50]", 
                                      "P[1]", "P[5]", "P[50]")])
 
-gelman.diag(as.mcmc.list(samples2)[, c("rho", "log_kappa", 
+gelman.diag(as.mcmc.list(samples3)[, c("rho", "log_kappa", 
                                      "S[1]", "S[5]", "S[50]", 
                                      "P[1]", "P[5]", "P[50]")], 
             autoburnin = FALSE)
-effectiveSize(as.mcmc.list(samples2)[, c("rho", "log_kappa", 
+effectiveSize(as.mcmc.list(samples3)[, c("rho", "log_kappa", 
                                      "S[1]", "S[5]", "S[50]", 
                                      "P[1]", "P[5]", "P[50]")])
 
@@ -281,7 +342,7 @@ effectiveSize(as.mcmc.list(samples2)[, c("rho", "log_kappa",
 ```
 
 
-## Model Evaluation 
+### Model Evaluation 
 
 Compare modeled vs true P's
 
@@ -289,35 +350,98 @@ Compare modeled vs true P's
 
 true_Ps <- sim_data$P
 obs_Ps <- sim_data$P_star
-modeled_Ps_exact <- cbind(samples2$chain1[,paste0("P[", 1:100, "]")])
-modeled_Ps_inexact <- cbind(samples3$chain1[,paste0("P[", 1:100, "]")])
+modeled_Ps_bench <- cbind(samples2$chain1[,paste0("P[", 1:100, "]")])
+modeled_Ps_no_bench <- cbind(samples3$chain1[,paste0("P[", 1:100, "]")])
 
 # posterior median = observed? (if yes rmse's equal)
 rmserr(true_Ps, obs_Ps)$rmse 
-rmserr(true_Ps, apply(X=modeled_Ps_exact, MARGIN=2 , FUN=median))$rmse
-rmserr(true_Ps, apply(X=modeled_Ps_inexact, MARGIN=2 , FUN=median))$rmse
+rmserr(true_Ps, apply(X=modeled_Ps_bench, MARGIN=2 , FUN=median))$rmse
+rmserr(true_Ps, apply(X=modeled_Ps_no_bench, MARGIN=2 , FUN=median))$rmse
 
 # 95% CI coverage
-CIs_exact <- apply(X=modeled_Ps_exact, MARGIN=2 , 
+CIs_bench <- apply(X=modeled_Ps_bench, MARGIN=2 , 
       FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
 
 print("No benchmarking coverage")
-sum(ifelse(true_Ps >= CIs_exact[1,] & true_Ps <= CIs_exact[2,], 1, 0))/100
+sum(ifelse(true_Ps >= CIs_bench[1,] & true_Ps <= CIs_bench[2,], 1, 0))/100
 
-CIs_inexact <- apply(X=modeled_Ps_inexact, MARGIN=2 , 
+CIs_no_bench <- apply(X=modeled_Ps_no_bench, MARGIN=2 , 
       FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
 
-print("Inexact benchmarking (new model) coverage")
-sum(ifelse(true_Ps >= CIs_inexact[1,] & true_Ps <= CIs_inexact[2,], 1, 0))/100
-
+print("No benchmarking (new model) coverage")
+sum(ifelse(true_Ps >= CIs_no_bench[1,] & true_Ps <= CIs_no_bench[2,], 1, 0))/100
 
 
 ```
 
-## Questions
-- Appropriate to sample using discrete laplace? Or better to use regular laplace and then round and clamp? 
-- How does including the benchmarking step make sense/change anything? The observed P* are already benchmarked so they will always sum up appropriately, right? U's and P*'s are both observed (right??) so they won't change
-- How would I implement inexact benchmarking when the P*'s and Uj's are already integers? (similar to above question)
-- Traceplots and convergence checks are not consistently good, how to proceed? (some runs, if data generation is convenient it works well, other times no)
-- Cluster access for full simulation study? 
-- Where to find tau? (privacy budget parameter)
+## Realistic Data Model 
+
+### Generate Data
+
+```{r}
+
+source("src/new_generate_data.r")
+
+n <- 100 # number of points
+rho <- 0.7 # spatial correlation       
+kappa <- 1.5 # precision scaling variable (for CAR)
+tau <- 0.25 # related to census privacy budget     
+J <- 10  # number of regions
+
+
+sim_data_new <- new_generate_data(n=n, 
+                          rho=rho, 
+                          kappa=kappa, 
+                          tau=tau,
+                          J=J)
+  
+  
+```
+
+### Run model with realistic data (no benchmark)
+
+```{r}
+
+source("src/new_data_model.r")
+
+# run model without benchmarking
+
+
+tic()
+samples4 <- new_data_model(sim_data_new, bench = FALSE)
+toc()
+
+# Diagnostics
+traceplot(as.mcmc.list(samples4)[, c("rho", "log_kappa",
+                                     "S[1]", "P[1]")])
+
+gelman.diag(as.mcmc.list(samples4)[, c("rho", "log_kappa",
+                                     "S[1]", "P[1]")], 
+            autoburnin = FALSE)
+effectiveSize(as.mcmc.list(samples4)[, c("rho", "log_kappa",
+                                     "S[1]", "P[1]")])
+
+```
+
+### Model Evaluation for realistic data
+
+Compare modeled vs true P's
+
+```{r}
+
+
+modeled_Ps <- cbind(samples4$chain1[,paste0("P[", 1:100, "]")])
+
+# posterior median = observed? (if yes rmse's equal)
+rmserr(true_Ps, obs_Ps)$rmse 
+rmserr(true_Ps, apply(X=modeled_Ps, MARGIN=2 , FUN=median))$rmse
+
+# 95% CI coverage
+CIs <- apply(X=modeled_Ps, MARGIN=2 , 
+      FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
+
+print("Coverage")
+sum(ifelse(true_Ps >= CIs[1,] & true_Ps <= CIs[2,], 1, 0))/100
+
+
+```
