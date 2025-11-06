@@ -16,21 +16,24 @@ library(pracma)
 library(extraDistr)
 
 
-new_model <- function(sim_data, bench){
+new_model <- function(sim_data, bench = "none"){
   # Prepare inputs for NIMBLE
   n         <- length(sim_data$S)
   neighbors <- lapply(1:n, function(i) which(sim_data$W[i, ] == 1))
   num  <- sapply(neighbors, length)
   adj <- unlist(neighbors)
+  weights <- rep(1, length(adj))
+  CM <- as.carCM(adj, weights, num)
+  C <- CM$C
+  M <- CM$M
   mu <- rep(0, n)
   eta <- 0.1
   L <- length(adj)
-  M <- CAR_calcM(num)
-  C <- CAR_calcC(adj, num)
   region_id <- sim_data$region_id
   J         <- length(unique(region_id))
   indicator <- matrix(0, J, n)
   for (j in 1:J) indicator[j, ] <- as.numeric(region_id == j)
+  rho_max <- carMaxBound(C, adj, num, M)
   
   
   # Bundle constants
@@ -45,7 +48,8 @@ new_model <- function(sim_data, bench){
     J = J, # length of region_id
     M = M, # pre-computed for dcar_proper
     C = C, # pre-computed for dcar_proper
-    ind_mat = indicator # to sum counts for benchmarking
+    ind_mat = indicator, # to sum counts for benchmarking0
+    rho_max = rho_max
   )
   
   data <- list(
@@ -95,13 +99,18 @@ new_model <- function(sim_data, bench){
     
     #### Exact benchmarking to higher-level totals ---------------------------
     
-    if (bench == TRUE){
+    if (bench == "exact"){
       for (j in 1:J) {
         U_sum[j] <- inprod(P[1:n], ind_mat[j, 1:n])
         ones_u[j] ~ dconstraint(U_sum[j] == U_obs[j])
       }
     }
-    
+    if (bench == "inexact"){
+      for (j in 1:J) {
+        U_sum[j] <- inprod(P[1:n], ind_mat[j, 1:n])
+        U_obs[j]  ~ dpois(eta * U_sum[j])
+      }
+    }
   })
   
   # Build and compile the model

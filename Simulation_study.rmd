@@ -27,6 +27,7 @@ library(igraph)
 library(RColorBrewer)
 library(nimbleNoBounds)
 library(pracma)
+library(gridExtra)
 
 ### ggplot theme
 theme_set(theme_bw() +
@@ -37,9 +38,9 @@ theme_set(theme_bw() +
                   strip.text = element_text(size = 12),
                   legend.position = "bottom"))
 
-if (rstudioapi::isAvailable()) {
-  setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-}
+# if (rstudioapi::isAvailable()) {
+#   setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# }
 ```
 
 
@@ -53,7 +54,7 @@ n <- 100 # number of points
 rho <- 0.7 # spatial correlation       
 kappa <- 1.5 # precision scaling variable (for CAR)
 tau <- 0.25 # related to census privacy budget     
-J <- 10  # number of regions
+J <- 6  # number of regions
 
 
 sim_data <- generate_data(n=n, 
@@ -74,53 +75,101 @@ sim_data <- generate_data(n=n,
 # sim_data$P       : true counts
 # sim_data$region_id: region labels  
 
+plot_neigh <- function(data, feature, post_means = NA){
+  # Set up a larger plotting area
+  par(mar = c(1,1,2,1))  # Reduce margins
+  
+  # Build igraph object
+  g <- graph_from_adjacency_matrix(data$W, 
+                                   mode = "undirected")
+  # Layout (e.g. Fruchterman–Reingold)
+  # Layout with modified Fruchterman-Reingold parameters
+  layout_ij <- layout_with_fr(g,
+                               niter = 1000
+    )
+  
+  if (feature == "regions"){
+    # 1. Choose a palette with J distinct colors
+    J <- length(unique(data$region_id))
+    palette <- brewer.pal(min(J, 12), "Set3")  
+    
+    # 2. Assign each region its color
+    region_cols <- palette[data$region_id]
+    
+    # 3. Plot, coloring nodes by region with larger sizes
+    plot(g, 
+         layout        = layout_ij,
+         vertex.size   = 6,         
+         vertex.color  = region_cols,
+         vertex.label  = NA,
+         edge.color    = "grey80",
+         edge.width    = 1)          
 
-# Build igraph object
-g <- graph_from_adjacency_matrix(sim_data$W, mode = "undirected")
+    # 4. Add a legend with larger text
+    legend("topright",
+           legend = paste("Region", sort(unique(data$region_id))),
+           col    = palette[sort(unique(data$region_id))],
+           pch    = 19,
+           bty    = "n")
+  }
+  
+  if (feature == "S"){
+    # Color nodes by latent log‐intensity S
+    S_vals <- data$S
+    pal_S <- colorRampPalette(c("blue","white","red"))(100)
+    S_cols <- pal_S[ cut(S_vals, breaks=100, include.lowest=TRUE) ]
+    
+    plot(g,
+         layout       = layout_ij,
+         vertex.size  = 6,          
+         vertex.color = S_cols,
+         vertex.label = NA,
+         edge.color   = "grey80",
+         edge.width   = 1,          
+         main         = "Adjacency graph colored by S")         
+  }
+  
+  if (feature == "P"){
+    # Get the range of values for the colorbar
+    P_vals <- data$P
+    if (length(post_means) > 1){
+      P_vals <- post_means
+    }
+    P_range <- range(P_vals)
+    pal_P <- colorRampPalette(c("lightyellow","darkorange","darkred"))(100)
+    P_cols <- pal_P[cut(P_vals, breaks=100, include.lowest=TRUE)]
+    
+    # Set up layout to accommodate plot and legend
+    layout(matrix(c(1,2), ncol=2), widths=c(4,1))
+    
+    # First plot: network
+    par(mar=c(1,1,2,1))
+    plot(g,
+         layout       = layout_ij,
+         vertex.size  = 6,          
+         vertex.color = P_cols,
+         vertex.label = NA,
+         edge.color   = "grey80",
+         edge.width   = 1,           
+         main         = "Adjacency graph colored by Population counts")
+    
+    # Second plot: color legend
+    par(mar=c(1,2,2,4))
+    plot(c(0,2), P_range, type='n', axes=FALSE, xlab='', ylab='')
+    title('Count')
+    gradient <- as.raster(matrix(rev(pal_P), ncol=1))
+    rasterImage(gradient, 0, P_range[1], 1, P_range[2])
+    axis(4, at=seq(P_range[1], P_range[2], length.out=5), 
+         las=1, cex.axis=0.8)
+    
+    # Reset layout
+    layout(1)
+  }
+}
 
-# Layout (e.g. Fruchterman–Reingold)
-layout_ij <- layout_with_fr(g)
 
-# 1. Choose a palette with J distinct colors
-J <- length(unique(sim_data$region_id))
-palette <- brewer.pal(min(J, 12), "Set3")  # up to 12 colors; you can pick another brewer palette
-
-# 2. Assign each region its color
-region_cols <- palette[sim_data$region_id]
-
-# 3. Plot, coloring nodes by region
-plot(g, 
-     layout        = layout_ij,
-     vertex.size   = 6,
-     vertex.color  = region_cols,
-     vertex.label  = NA,
-     edge.color    = "grey80",
-     main          = "Adjacency Graph with Regions")
-
-# 4. Add a legend
-legend("topright",
-       legend = paste("Region", sort(unique(sim_data$region_id))),
-       col    = palette[sort(unique(sim_data$region_id))],
-       pch    = 19,
-       pt.cex = 1.5,
-       bty    = "n")
-
-
-# Color nodes by latent log‐intensity S
-S_vals <- sim_data$S
-# build a 100‐step palette
-pal_S <- colorRampPalette(c("blue","white","red"))(100)
-# cut S into 100 bins
-S_cols <- pal_S[ cut(S_vals, breaks=100, include.lowest=TRUE) ]
-
-plot(g,
-     layout       = layout_ij,
-     vertex.size  = 6,
-     vertex.color = S_cols,
-     vertex.label = NA,
-     edge.color   = "grey80",
-     main         = "Adjacency graph colored by latent log-intensity")
-
+plot_neigh(sim_data, "regions")
+plot_neigh(sim_data, "S")
 
 ```
 
@@ -228,12 +277,15 @@ Rather than injecting laplace noise and rounding, simply use discrete laplace (i
 ```
 
 
-### Write NIMBLE distribution for rounded Normal
+### Write rounded Normal nimble dist
 
 ```{r droundnorm_nimble_function}
 
 droundnorm <- nimbleFunction(
-  run = function(x = double(0), mu = double(0), sigma = double(0), log = integer(0)) {
+  run = function(x = double(0),    
+                 mu = double(0),   
+                 sigma = double(0),   
+                 log = double(0, default = 0)) {
     returnType(double(0))
     # Support: x must be (near) integer
     if (abs(x - round(x)) > 1e-8) {
@@ -260,7 +312,7 @@ droundnorm <- nimbleFunction(
 # RNG: sample normal then round to nearest integer
 rroundnorm <- nimbleFunction(
   run = function(n = integer(0), mu = double(0), sigma = double(0)) {
-    returnType(double(0))
+    returnType(integer(0))
     if (n != 1) nimPrint("rroundnorm generates one value; ignoring n")
     if (sigma <= 0) nimStop("sigma must be > 0")
     z <- rnorm(1, mean = mu, sd = sigma)
@@ -286,13 +338,13 @@ registerDistributions(list(
 
 (currently doesn't converge, maybe add a smarter sampler)
 
-```{r with_bench}
+```{r with_exact_bench}
 source("src/new_model.r")
 
 # run model with (exact) benchmarking
 
 tic()
-samples2 <- new_model(sim_data, bench = TRUE)
+samples2 <- new_model(sim_data, bench = "exact")
 toc()
 
 # Diagnostics
@@ -314,15 +366,41 @@ effectiveSize(as.mcmc.list(samples2)[, c("rho", "log_kappa",
 
 ### Complete model with inexact benchmarking
 
+
+```{r with_inexact_bench}
+# run model with (exact) benchmarking
+
+tic()
+samples2.1 <- new_model(sim_data, bench = "inexact")
+toc()
+
+# Diagnostics
+traceplot(as.mcmc.list(samples2.1)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")])
+
+gelman.diag(as.mcmc.list(samples2.1)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")], 
+            autoburnin = FALSE)
+effectiveSize(as.mcmc.list(samples2.1)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")])
+
+
+
+```
+
+### Complete model without benchmarking
+
 ```{r without_bench}
 
 source("src/new_model.r")
 
 # run model without benchmarking
 
-
 tic()
-samples3 <- new_model(sim_data, bench = FALSE)
+samples3 <- new_model(sim_data, bench = "none")
 toc()
 
 # Diagnostics
@@ -338,11 +416,11 @@ effectiveSize(as.mcmc.list(samples3)[, c("rho", "log_kappa",
                                      "S[1]", "S[5]", "S[50]", 
                                      "P[1]", "P[5]", "P[50]")])
 
-
 ```
 
 
 ### Model Evaluation 
+
 
 Compare modeled vs true P's
 
@@ -350,7 +428,7 @@ Compare modeled vs true P's
 
 true_Ps <- sim_data$P
 obs_Ps <- sim_data$P_star
-modeled_Ps_bench <- cbind(samples2$chain1[,paste0("P[", 1:100, "]")])
+modeled_Ps_bench <- cbind(samples2.1$chain1[,paste0("P[", 1:100, "]")])
 modeled_Ps_no_bench <- cbind(samples3$chain1[,paste0("P[", 1:100, "]")])
 
 # posterior median = observed? (if yes rmse's equal)
@@ -362,13 +440,13 @@ rmserr(true_Ps, apply(X=modeled_Ps_no_bench, MARGIN=2 , FUN=median))$rmse
 CIs_bench <- apply(X=modeled_Ps_bench, MARGIN=2 , 
       FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
 
-print("No benchmarking coverage")
+print("With benchmarking coverage")
 sum(ifelse(true_Ps >= CIs_bench[1,] & true_Ps <= CIs_bench[2,], 1, 0))/100
 
 CIs_no_bench <- apply(X=modeled_Ps_no_bench, MARGIN=2 , 
       FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
 
-print("No benchmarking (new model) coverage")
+print("No benchmarking coverage")
 sum(ifelse(true_Ps >= CIs_no_bench[1,] & true_Ps <= CIs_no_bench[2,], 1, 0))/100
 
 
@@ -378,70 +456,119 @@ sum(ifelse(true_Ps >= CIs_no_bench[1,] & true_Ps <= CIs_no_bench[2,], 1, 0))/100
 
 ### Generate Data
 
-```{r}
+```{r fig.width=12, fig.height=6}
 
 source("src/new_generate_data.r")
 
-n <- 100 # number of points
+root_n <- 15 # root of number of points (to make grid with n observations)
 rho <- 0.7 # spatial correlation       
 kappa <- 1.5 # precision scaling variable (for CAR)
-tau <- 0.25 # related to census privacy budget     
-J <- 10  # number of regions
+tau <- 50 # related to census privacy budget     
+J <- 6  # number of regions
 
 
-sim_data_new <- new_generate_data(n=n, 
+sim_data_new <- new_generate_data(root_n=root_n, 
                           rho=rho, 
                           kappa=kappa, 
                           tau=tau,
                           J=J)
-  
-  
+
+plot_neigh(sim_data_new, "regions")
+plot_neigh(sim_data_new, "S")
+plot_neigh(sim_data_new, "P")
+
 ```
 
 ### Run model with realistic data (no benchmark)
 
 ```{r}
-
-source("src/new_data_model.r")
+source("src/new_model.r")
 
 # run model without benchmarking
 
-
 tic()
-samples4 <- new_data_model(sim_data_new, bench = FALSE)
+samples4 <- new_model(sim_data_new)
 toc()
 
 # Diagnostics
-traceplot(as.mcmc.list(samples4)[, c("rho", "log_kappa",
-                                     "S[1]", "P[1]")])
+traceplot(as.mcmc.list(samples4)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")])
 
-gelman.diag(as.mcmc.list(samples4)[, c("rho", "log_kappa",
-                                     "S[1]", "P[1]")], 
+gelman.diag(as.mcmc.list(samples4)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")], 
             autoburnin = FALSE)
-effectiveSize(as.mcmc.list(samples4)[, c("rho", "log_kappa",
-                                     "S[1]", "P[1]")])
-
+effectiveSize(as.mcmc.list(samples4)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")])
 ```
+
+
+### Run model with realistic data (no benchmark)
+
+```{r}
+source("src/new_model.r")
+
+# run model with benchmarking
+
+tic()
+samples5 <- new_model(sim_data_new, bench = "inexact")
+toc()
+
+# Diagnostics
+traceplot(as.mcmc.list(samples5)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")])
+
+gelman.diag(as.mcmc.list(samples5)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")], 
+            autoburnin = FALSE)
+effectiveSize(as.mcmc.list(samples5)[, c("rho", "log_kappa", 
+                                     "S[1]", "S[5]", "S[50]", 
+                                     "P[1]", "P[5]", "P[50]")])
+```
+
+
 
 ### Model Evaluation for realistic data
 
 Compare modeled vs true P's
 
-```{r}
+```{r fig.width=12, fig.height=6}
 
+# Assuming you have your samples and sim_data objects:
+plot_neigh(sim_data_new, "P")
 
-modeled_Ps <- cbind(samples4$chain1[,paste0("P[", 1:100, "]")])
+modeled_Ps_no_bench2 <- cbind(samples4$chain1[,paste0("P[", 1:root_n^2, "]")])
+P_means_no_bench <- apply(modeled_Ps_no_bench2, 2, mean)
+plot_neigh(sim_data_new, "P", P_means_no_bench)
+
+modeled_Ps_bench2 <- cbind(samples5$chain1[,paste0("P[", 1:root_n^2, "]")])
+P_means_bench <- apply(modeled_Ps_bench2, 2, mean)
+plot_neigh(sim_data_new, "P", P_means_bench)
 
 # posterior median = observed? (if yes rmse's equal)
+true_Ps <- sim_data_new$P
+obs_Ps <- sim_data_new$P_star
+
 rmserr(true_Ps, obs_Ps)$rmse 
-rmserr(true_Ps, apply(X=modeled_Ps, MARGIN=2 , FUN=median))$rmse
+rmserr(true_Ps, apply(X=modeled_Ps_no_bench2, MARGIN=2 , FUN=median))$rmse
+rmserr(true_Ps, apply(X=modeled_Ps_bench2, MARGIN=2 , FUN=median))$rmse
 
 # 95% CI coverage
-CIs <- apply(X=modeled_Ps, MARGIN=2 , 
+no_bench_CIs <- apply(X=modeled_Ps_no_bench2, MARGIN=2 , 
       FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
 
-print("Coverage")
-sum(ifelse(true_Ps >= CIs[1,] & true_Ps <= CIs[2,], 1, 0))/100
+print("No benchmarking Coverage")
+sum(ifelse(true_Ps >= no_bench_CIs[1,] & true_Ps <= no_bench_CIs[2,], 1, 0))/(root_n^2)
+
+bench_CIs <- apply(X=modeled_Ps_bench2, MARGIN=2 , 
+      FUN= function(x) quantile(x, probs = c(0.025, 0.975))) 
+
+print("Inexact benchmarking Coverage")
+sum(ifelse(true_Ps >= bench_CIs[1,] & true_Ps <= bench_CIs[2,], 1, 0))/(root_n^2)
 
 
 ```

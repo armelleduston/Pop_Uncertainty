@@ -47,15 +47,13 @@ generate_data <- function(n, rho, kappa, tau, J){
   P_star <- round(P + rnorm(n, mean = 0, sd=tau))
   P_star <- ifelse(P_star < 0, 0, P_star) 
   
-  
   # 5. Define coarse regions and benchmark totals U_j
   region_id <- sample(1:J, n, replace = TRUE)
   U <- tapply(P_star, region_id, sum)
   
-  # 6. Output simulated data
   sim_data <- list(
-    W = W,
-    D = D,
+    W = W,                       # dense 0/1 adjacency
+    D = D,                       # dense diagonal degree matrix
     S = S,
     P = P,
     P_star = P_star,
@@ -64,6 +62,7 @@ generate_data <- function(n, rho, kappa, tau, J){
     tau = tau,
     rho = rho
   )
+
   
   return (sim_data)
 }
