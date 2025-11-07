@@ -27,7 +27,8 @@ new_model <- function(sim_data, bench = "none"){
   C <- CM$C
   M <- CM$M
   mu <- rep(0, n)
-  eta <- 0.1
+  eta <- 0.3 # induces ~99% of observations within 30% of U
+  U_sd <- (sim_data$U)*eta/3
   L <- length(adj)
   region_id <- sim_data$region_id
   J         <- length(unique(region_id))
@@ -43,7 +44,7 @@ new_model <- function(sim_data, bench = "none"){
     num = num, # number of neighbors
     tau = sim_data$tau, # privacy budget param
     mu = mu, # explicitly give mu = 0
-    eta = eta, # discrepancy parameter
+    U_sd = U_sd, # discrepancy parameter
     L = L, # length of adj
     J = J, # length of region_id
     M = M, # pre-computed for dcar_proper
@@ -73,7 +74,7 @@ new_model <- function(sim_data, bench = "none"){
   code <- nimbleCode({
     
     #### Hyperpriors ----------------------------------------------------------
-    rho   ~ dunif(0, 1)
+    rho   ~ dunif(0, rho_max)
     log_kappa ~ dLogInvgamma(.001, .001)
     kappa <- exp(log_kappa)
     
@@ -108,7 +109,7 @@ new_model <- function(sim_data, bench = "none"){
     if (bench == "inexact"){
       for (j in 1:J) {
         U_sum[j] <- inprod(P[1:n], ind_mat[j, 1:n])
-        U_obs[j]  ~ dpois(eta * U_sum[j])
+        U_obs[j]  ~ droundnorm(U_sum[j], U_sd[j])
       }
     }
   })

@@ -31,106 +31,64 @@ library(pracma)
 # Clear workspace 
 rm(list = ls())
 
+simulate <- function(rho, kappa, eta) {
+  ## Generate Data ##############################################################
+  
+  source("src/new_generate_data.r")
+  
+  root_n <- 15 # root of number of points
+  rho <- 0.6 # spatial correlation       
+  kappa <- kappa # precision scaling variable (for CAR)
+  tau <- tau # related to census privacy budget     
+  J <- 10  # number of regions
+  eta <- eta
+  
+  
+  sim_data <- new_generate_data(root_n, 
+                                0.6, 
+                                kappa, 
+                                tau, 
+                                J)
+  
+  ###############################################################################
+  
+  
+  ## Run model without benchmarking #############################################
+  
+  source("src/new_model.R")
+  
+  samples_no_bench <- new_model(sim_data,
+                        bench = "none",
+                        eta = eta)
+  
+  ###############################################################################
+  
+  ## Run model with inexact benchmarking ########################################
+  
+  source("src/new_model.R")
+  
+  samples_bench <- new_model(sim_data,
+                       bench = "inexact",
+                       eta = eta)
+  
+  ###############################################################################
+  
+  return ( list(samples_no_bench=samples_no_bench,
+                samples_bench=samples_bench)) 
+}
 
-## Generate Data ##############################################################
-
-source("src/generate_data.r")
-
-n <- 200 # number of points
-rho <- 0.7 # spatial correlation       
-kappa <- 1.5 # precision scaling variable (for CAR)
-tau <- 0.25 # related to census privacy budget     
-J <- 10  # number of regions
-
-
-sim_data <- generate_data(n=n, 
-                          rho=rho, 
-                          kappa=kappa, 
-                          tau=tau,
-                          J=J)
-
-###############################################################################
-
-
-## Define the ddlaplace_nim distribution for NIMBLE ###########################
-
-ddlaplace_nim <- nimbleFunction(
-  run = function(x = double(0), 
-                 mu = double(0), 
-                 tau = double(0), 
-                 log = integer(0, default = 0)) {
-    returnType(double(0))
-    
-    # Parameter checks
-    if(tau <= 0) return(NaN)
-    
-    # Calculate lambda parameter (lambda = exp(-1/tau))
-    lambda <- exp(-1/tau)
-    
-    # Calculate normalization constant
-    c <- (1 - lambda) / (1 + lambda)
-    
-    # Calculate PMF
-    logProb <- log(c) + abs(x - mu) * log(lambda)
-    
-    # Return log or natural probability
-    if(log) return(logProb)
-    else return(exp(logProb))
+# Run via command line with args rho kappa eta and save results
+if (!interactive()) {
+  args <- commandArgs(trailingOnly = TRUE)
+  if (length(args) >= 3) {
+    rho_val <- as.numeric(args[1])
+    kappa_val <- as.numeric(args[2])
+    eta_val <- as.numeric(args[3])
+    dir.create("results", showWarnings = FALSE)
+    out <- simulate(rho_val, kappa_val, eta_val)
+    saveRDS(out, file = paste0("results/sim_rho", rho_val, "_kappa", kappa_val, "_eta", eta_val, ".rds"))
   }
-)
+}
 
-# Define the simulation function without using rgeom
-rdlaplace_nim <- nimbleFunction(
-  run = function(n = integer(0), mu = double(0), tau = double(0)) {
-    returnType(double(0))
-    
-    # Parameter check
-    if(tau <= 0) return(NaN)
-    if(n != 1) stop("rdlaplace_nim only handles n = 1")
-    
-    # Calculate lambda
-    lambda <- exp(-1/tau)
-    
-    # Probability of X <= mu
-    p_leq_mu <- 1 / (1 + lambda)
-    
-    # Decide direction using uniform random number
-    u <- runif(1)
-    if(u < p_leq_mu) {
-      # X <= mu (including equality)
-      # Instead of using rgeom, implement geometric sampling directly
-      v <- runif(1)
-      # Convert uniform to geometric: k = floor(log(v) / log(lambda))
-      k <- floor(log(v) / log(1 - lambda))
-      return(mu - k)
-    } else {
-      # X > mu
-      v <- runif(1)
-      # Convert uniform to geometric: k = floor(log(v) / log(lambda))
-      k <- floor(log(v) / log(1 - lambda))
-      return(mu + k + 1)
-    }
-  }
-)
 
-# Register the distribution with NIMBLE
-registerDistributions(list(
-  ddlaplace_nim = list(
-    BUGSdist = "ddlaplace_nim(mu, tau)",
-    discrete = TRUE,
-    types = c('value = double(0)', 'mu = double(0)', 'tau = double(0)'),
-    pqAvail = FALSE,
-    range = c(-Inf, Inf)
-  )
-))
-
-###############################################################################
-
-## Run model with exact benchmarking ##########################################
-
-source("src/complete_model.r")
-
-samples2 <- complete_model(sim_data, exact = TRUE)
-
-###############################################################################
 

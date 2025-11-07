@@ -505,7 +505,7 @@ effectiveSize(as.mcmc.list(samples4)[, c("rho", "log_kappa",
 ```
 
 
-### Run model with realistic data (no benchmark)
+### Run model with realistic data ( benchmark)
 
 ```{r}
 source("src/new_model.r")
@@ -553,8 +553,11 @@ plot_neigh(sim_data_new, "P", P_means_bench)
 true_Ps <- sim_data_new$P
 obs_Ps <- sim_data_new$P_star
 
+print("RMSE between P and P*")
 rmserr(true_Ps, obs_Ps)$rmse 
+print("RMSE between P and no bench posterior P")
 rmserr(true_Ps, apply(X=modeled_Ps_no_bench2, MARGIN=2 , FUN=median))$rmse
+print("RMSE between P and inexact bench posterior P")
 rmserr(true_Ps, apply(X=modeled_Ps_bench2, MARGIN=2 , FUN=median))$rmse
 
 # 95% CI coverage

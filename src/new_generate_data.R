@@ -96,7 +96,13 @@ new_generate_data <- function(root_n, rho, kappa, tau, J){
   S <- mvrnorm(1, mu = rep(0, n), Sigma = Sigma)
   
   # 3. Simulate true counts P_i ~ Poisson(exp(S_i))
-  base_pop <- rnorm(n, 10000, 1500)
+  base_pop <- rep(0,n)
+  rural_urban <- rbinom(n ,1, exp(S)/(1 + exp(S)))
+  rural_idx = which(rural_urban == 1)
+  urban_idx = which(rural_urban == 0)
+  base_pop[rural_idx] <- rlnorm(n=length(rural_idx), 9.9, 0.55)
+  base_pop[urban_idx] <- rlnorm(n=length(rural_idx), 12.5, 0.85)
+  
   lambda <- base_pop * exp(S)
   P <- rpois(n, lambda)
   
