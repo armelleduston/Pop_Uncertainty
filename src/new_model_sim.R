@@ -16,7 +16,7 @@ library(pracma)
 library(extraDistr)
 
 
-new_model <- function(sim_data, bench = "none", eta = 0.3){
+new_model <- function(sim_data, bench = "none"){
   # Prepare inputs for NIMBLE
   n         <- length(sim_data$S)
   neighbors <- lapply(1:n, function(i) which(sim_data$W[i, ] == 1))
@@ -27,8 +27,8 @@ new_model <- function(sim_data, bench = "none", eta = 0.3){
   C <- CM$C
   M <- CM$M
   mu <- rep(0, n)
-  eta <- eta # induces ~99% of observations within 30% of U
-  U_sd <- (sim_data$U)*eta/3
+  eta <- sim_data$eta 
+  U_sd <- (sim_data$U)*eta/3 # induces ~99% of observations within eta*100% of U
   L <- length(adj)
   region_id <- sim_data$region_id
   J         <- length(unique(region_id))
@@ -116,34 +116,8 @@ new_model <- function(sim_data, bench = "none", eta = 0.3){
   
   # Build and compile the model
   model <- nimbleModel(code, data = data, inits = inits, constants = constants)
-  conf  <- configureMCMC(model)
   
-  # Customize samplers
-  # Use slice sampling for rho and kappa
-  conf$removeSampler('rho')
-  conf$addSampler(target = 'rho', type = 'slice')
-  conf$removeSampler('log_kappa')
-  conf$addSampler(target = 'log_kappa', type = 'slice')
-  conf$addMonitors(c("S", "P"))
-  
-  
-  # Build and compile MCMC
-  Rmcmc <- buildMCMC(conf)
-  Cmodel <- compileNimble(model)
-  Cmcmc  <- compileNimble(Rmcmc, project = Cmodel)
-  
-  # Run MCMC
-  niter   <- 10000
-  nburnin <- 2000
-  thin    <- 1
-  samples <- runMCMC(Cmcmc, 
-                      niter = niter, 
-                      nburnin = nburnin, 
-                      thin = thin, 
-                      nchains = 3, 
-                      samplesAsCodaMCMC = TRUE)
-  
-  return (samples)
+  return (model)
 }
 
 

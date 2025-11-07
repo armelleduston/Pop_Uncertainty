@@ -116,7 +116,7 @@ new_generate_data <- function(root_n, rho, kappa, tau, J){
 
   # 6. Benchmark totals by region
   U <- tapply(P_star, region_id, sum)
-
+  
   sim_data <- list(
     W = W,                       # dense 0/1 adjacency
     D = D,                       # dense diagonal degree matrix

@@ -15,7 +15,7 @@ module load R || true
 cd "$SLURM_SUBMIT_DIR"
 
 # Parameter grids (edit as needed)
-etas=(0.1 0.5 1 2)
+etas=(0.1 0.2 0.3)
 taus=(0.1 0.3 0.5 0.7)
 kappas=(0.1 1 10 25)
 
