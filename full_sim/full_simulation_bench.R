@@ -1,0 +1,257 @@
+library(ggplot2)
+library(tidyr)
+library(patchwork)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(MASS)
+library(nimble)
+library(coda)
+library(extraDistr)
+library(igraph)
+library(RColorBrewer)
+library(nimbleNoBounds)
+library(pracma)
+library(extraDistr)
+library(R.utils)   # <-- add this
+
+source("full_sim/full_model.R")
+source("src/new_generate_data.R")
+
+# define to generate data
+root_n <- 15 
+rho    <- 0.7 
+kappa  <- 1.5 
+tau    <- 50 
+J      <- 6  
+eta    <- 0.3
+
+R <- 300   # number of simulation runs
+
+# MCMC settings
+niter   <- 10000
+nburnin <- 2000
+thin    <- 1
+
+# ------------------------------------------------------------------------------
+# NIMBLE Custom Distributions (Must be defined in global scope)
+# ------------------------------------------------------------------------------
+## Discrete normal in extraDistr is:  X = floor(Z),  Z ~ Normal(mean, sd)
+## PMF: P(X = x) = Phi((x+1-mean)/sd) - Phi((x-mean)/sd), for integer x
+## RNG: floor(rnorm())
+
+## helper: log(exp(a) - exp(b)) for a >= b, numerically stable
+logspace_sub <- nimbleFunction(
+  run = function(a = double(0), b = double(0)) {
+    returnType(double(0))
+    if(b > a) return(logspace_sub(b, a))   # enforce a >= b
+    if(b == a) return(-Inf)
+    ## a + log(1 - exp(b-a))
+    return(a + log1p(-exp(b - a)))
+  }
+)
+
+ddnorm_nim <- nimbleFunction(
+  run = function(x = double(0),
+                 mean = double(0),
+                 sd = double(0),
+                 log = integer(0, default = 0)) {
+    returnType(double(0))
+    
+    if(sd <= 0) {
+      if(log) return(-Inf) else return(0.0)
+    }
+    
+    ## enforce integer support (as in extraDistr)
+    if(x != floor(x)) {
+      if(log) return(-Inf) else return(0.0)
+    }
+    
+    ## compute log PMF stably: log( Phi(b) - Phi(a) )
+    ## where a = (x-mean)/sd, b = (x+1-mean)/sd
+    lp_b <- pnorm(x + 1.0, mean, sd, 1, 1)  # log Phi((x+1-mean)/sd)
+    lp_a <- pnorm(x,       mean, sd, 1, 1)  # log Phi((x-mean)/sd)
+    
+    logProb <- logspace_sub(lp_b, lp_a)
+    
+    if(log) return(logProb) else return(exp(logProb))
+  }
+)
+
+rdnorm_nim <- nimbleFunction(
+  run = function(n = integer(0), mean = double(0), sd = double(0)) {
+    returnType(double(0))
+    if(sd <= 0) return(NaN)
+    if(n != 1) stop("rdnorm_nim only handles n = 1")
+    return(floor(rnorm(1, mean, sd)))
+  }
+)
+
+registerDistributions(list(
+  ddnorm_nim = list(
+    BUGSdist = "ddnorm_nim(mean, sd)",
+    discrete = TRUE,
+    types = c('value = double(0)', 'mean = double(0)', 'sd = double(0)'),
+    pqAvail = FALSE,
+    range = c(-Inf, Inf)
+  )
+))
+
+# ------------------------------------------------------------------------------
+# Helper Functions
+# ------------------------------------------------------------------------------
+
+compile_model <- function(model){
+  conf  <- configureMCMC(model)
+  conf$removeSampler('rho')
+  conf$addSampler(target = 'rho', type = 'slice')
+  conf$removeSampler('log_kappa')
+  conf$addSampler(target = 'log_kappa', type = 'slice')
+  conf$addMonitors(c("P"))
+  
+  Rmcmc  <- buildMCMC(conf)
+  Cmodel <- compileNimble(model)
+  Cmcmc  <- compileNimble(Rmcmc, project = Cmodel)
+  
+  list(Cmodel = Cmodel, Cmcmc = Cmcmc)
+}
+
+get_results <- function(samples, data){
+  # true underlying counts from data generation
+  true_Ps <- as.numeric(data$P)
+  
+  # samples is already a matrix with columns like "P[1]", "P[2]", ...
+  samp_mat <- as.matrix(samples)
+  
+  # extract only the P columns, in order
+  P_cols <- paste0("P[", 1:length(true_Ps), "]")
+  modeled_Ps <- samp_mat[, P_cols, drop = FALSE]  # iterations x n_cells
+  
+  # posterior mean for each cell
+  post_means <- colMeans(modeled_Ps)
+  
+  # bias: average over cells of (posterior mean - truth)
+  bias <- mean(post_means - true_Ps)
+  
+  # pointwise 95% credible intervals
+  CIs <- apply(
+    X      = modeled_Ps,
+    MARGIN = 2,
+    FUN    = function(x) quantile(x, probs = c(0.025, 0.975))
+  )
+  
+  # coverage: fraction of cells whose true value lies in their CI
+  coverage <- mean(true_Ps >= CIs[1, ] & true_Ps <= CIs[2, ])
+  
+  c(bias, coverage)
+}
+
+
+# ------------------------------------------------------------------------------
+# Single-thread Simulation (no parallel)
+# ------------------------------------------------------------------------------
+
+set.seed(2026)
+
+cat("Generating dummy data and compiling model once...\n")
+data_dummy  <- new_generate_data(root_n, rho, kappa, tau, J)
+bench_model <- DAS_model(data_dummy, bench = "inexact", eta = eta)
+objs        <- compile_model(bench_model)
+bench_cmodel <- objs$Cmodel
+bench_cmcmc  <- objs$Cmcmc
+
+# storage: Bias, Coverage, Runtime
+results_mat <- matrix(NA_real_, nrow = R, ncol = 3)
+
+cat("Starting simulation with", R, "runs (single chain)...\n")
+
+for (r in 1:R) {
+  # new data for this run
+  data_r <- new_generate_data(root_n, rho, kappa, tau, J)
+  
+  # standard deviation for inexact benchmarking
+  U_sd_r <- data_r$U * eta / 3
+  
+  # indicator matrix for regions
+  region_id <- data_r$region_id
+  J <- length(unique(region_id))
+  n <- root_n^2
+  indicator <- matrix(0, J, n)
+  for (j in 1:J) indicator[j, ] <- as.numeric(region_id == j)
+  
+  # update data in compiled model
+  bench_cmodel$setData(
+    Pstar_obs = data_r$P_star,
+    U_obs     = data_r$U,
+    U_sd      = U_sd_r,
+    ind_mat = indicator
+  )
+  
+  # update initial values
+  bench_cmodel$setInits(list(
+    P         = pmax(data_r$P_star, 1),
+    S         = log(pmax(data_r$P_star, 1)),
+    rho       = 0.5,
+    log_kappa = 0
+  ))
+  
+  # time this run with a 2-minute timeout
+  t_start <- proc.time()[3]
+  samples <- NULL
+  
+  mcmc_try <- try(
+    withTimeout(
+      {
+        runMCMC(
+          bench_cmcmc,
+          niter   = niter,
+          nburnin = nburnin,
+          thin    = thin,
+          nchains = 1,
+          setSeed = FALSE
+        )
+      },
+      timeout = 120,           # 2 minutes in seconds
+      onTimeout = "error"      # throw error if exceeded
+    ),
+    silent = TRUE
+  )
+  
+  if (inherits(mcmc_try, "try-error")) {
+    # timed out or other error -> record NA and continue
+    results_mat[r, ] <- NA_real_
+  } else {
+    samples <- mcmc_try
+    t_end   <- proc.time()[3]
+    
+    res <- try(get_results(samples, data_r), silent = TRUE)
+    if (inherits(res, "try-error")) {
+      results_mat[r, ] <- NA_real_
+    } else {
+      results_mat[r, ] <- c(res, t_end - t_start)
+    }
+  }
+}
+
+colnames(results_mat) <- c("Bias", "CI_Coverage", "Runtime")
+
+# summary table
+summary_df <- data.frame(
+  t(apply(results_mat[1:261,], 2, mean, na.rm = TRUE))
+)
+
+kbl(
+  summary_df,
+  caption   = "Simulation Results for 300 runs (single-thread, 1 chain)",
+  booktabs  = TRUE,
+  digits    = 4,
+  col.names = c("Avg Bias", "Avg CI Coverage", "Avg Runtime (sec)")
+) |>
+  kable_styling(
+    full_width    = FALSE,
+    latex_options = c("striped", "hold_position")
+  )
+
+write.csv(summary_df,
+          "full_sim/results/bench_result_summary.csv")
+

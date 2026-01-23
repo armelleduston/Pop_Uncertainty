@@ -16,7 +16,7 @@ library(pracma)
 library(extraDistr)
 
 
-new_model <- function(sim_data, bench = "none"){
+DAS_model <- function(sim_data, bench = "none", eta = 0.3){
   # Prepare inputs for NIMBLE
   n         <- length(sim_data$S)
   neighbors <- lapply(1:n, function(i) which(sim_data$W[i, ] == 1))
@@ -27,8 +27,8 @@ new_model <- function(sim_data, bench = "none"){
   C <- CM$C
   M <- CM$M
   mu <- rep(0, n)
-  eta <- sim_data$eta 
-  U_sd <- (sim_data$U)*eta/3 # induces ~99% of observations within eta*100% of U
+  eta <- eta # induces ~99% of observations within 30% of U
+  U_sd <- (sim_data$U)*eta/3
   L <- length(adj)
   region_id <- sim_data$region_id
   J         <- length(unique(region_id))
@@ -44,20 +44,19 @@ new_model <- function(sim_data, bench = "none"){
     num = num, # number of neighbors
     tau = sim_data$tau, # privacy budget param
     mu = mu, # explicitly give mu = 0
-    U_sd = U_sd, # discrepancy parameter
     L = L, # length of adj
     J = J, # length of region_id
     M = M, # pre-computed for dcar_proper
     C = C, # pre-computed for dcar_proper
-    ind_mat = indicator, # to sum counts for benchmarking0
-    rho_max = rho_max
+    rho_max = rho_max,
+    ones_u    = rep(1, J)          
   )
   
   data <- list(
     Pstar_obs = sim_data$P_star,   # length n
     U_obs     = sim_data$U,        # length J
-    ones_p    = rep(1, n),         
-    ones_u    = rep(1, J)          
+    U_sd      = U_sd,
+    ind_mat = indicator # to sum counts for benchmarking
   )
   
   
@@ -65,7 +64,6 @@ new_model <- function(sim_data, bench = "none"){
   inits <- list(
     S           = rnorm(n, 0, 1),
     P           = pmax(sim_data$P_star, 1), 
-    Pstar       = sim_data$P_star,
     rho         = 0.5,
     log_kappa   = 0
   )
@@ -93,12 +91,12 @@ new_model <- function(sim_data, bench = "none"){
       P[i] ~ dpois(exp(S[i]))
     }
     
-    #### Measurement model: direct discrete Laplace noise --------------------
+    #### Measurement model: direct discrete Gaussian noise --------------------
     for (i in 1:n) { 
-      Pstar_obs[i] ~ droundnorm(P[i], tau)
+      Pstar_obs[i] ~ ddnorm_nim(P[i], tau)
     }
     
-    #### Exact benchmarking to higher-level totals ---------------------------
+    #### Exact and Inexact benchmarking if specified ---------------------------
     
     if (bench == "exact"){
       for (j in 1:J) {
@@ -109,7 +107,7 @@ new_model <- function(sim_data, bench = "none"){
     if (bench == "inexact"){
       for (j in 1:J) {
         U_sum[j] <- inprod(P[1:n], ind_mat[j, 1:n])
-        U_obs[j]  ~ droundnorm(U_sum[j], U_sd[j])
+        U_obs[j]  ~ ddnorm_nim(U_sum[j], U_sd[j])
       }
     }
   })

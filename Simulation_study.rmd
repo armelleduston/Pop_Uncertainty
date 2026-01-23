@@ -277,58 +277,70 @@ Rather than injecting laplace noise and rounding, simply use discrete laplace (i
 ```
 
 
-### Write rounded Normal nimble dist
+### Write disctete Normal nimble dist
 
-```{r droundnorm_nimble_function}
+```{r ddnorm_nimble_function}
 
-droundnorm <- nimbleFunction(
-  run = function(x = double(0),    
-                 mu = double(0),   
-                 sigma = double(0),   
-                 log = double(0, default = 0)) {
+## Discrete normal in extraDistr is:  X = floor(Z),  Z ~ Normal(mean, sd)
+## PMF: P(X = x) = Phi((x+1-mean)/sd) - Phi((x-mean)/sd), for integer x
+## RNG: floor(rnorm())
+
+## helper: log(exp(a) - exp(b)) for a >= b, numerically stable
+logspace_sub <- nimbleFunction(
+  run = function(a = double(0), b = double(0)) {
     returnType(double(0))
-    # Support: x must be (near) integer
-    if (abs(x - round(x)) > 1e-8) {
-      if (log == 1) return(-Inf)
-      return(0.0)
-    }
-    if (sigma <= 0) {
-      if (log == 1) return(-Inf)
-      return(0.0)
-    }
-    a <- (x - 0.5 - mu) / sigma
-    b <- (x + 0.5 - mu) / sigma
-    p <- pnorm(b, 0, 1) - pnorm(a, 0, 1)   # CDF difference
-    # Guard tiny probabilities to avoid log(0)
-    if (p <= 0) {
-      if (log == 1) return(-Inf)
-      return(0.0)
-    }
-    if (log == 1) return(log(p))
-    return(p)
+    if(b > a) return(logspace_sub(b, a))   # enforce a >= b
+    if(b == a) return(-Inf)
+    ## a + log(1 - exp(b-a))
+    return(a + log1p(-exp(b - a)))
   }
 )
 
-# RNG: sample normal then round to nearest integer
-rroundnorm <- nimbleFunction(
-  run = function(n = integer(0), mu = double(0), sigma = double(0)) {
-    returnType(integer(0))
-    if (n != 1) nimPrint("rroundnorm generates one value; ignoring n")
-    if (sigma <= 0) nimStop("sigma must be > 0")
-    z <- rnorm(1, mean = mu, sd = sigma)
-    return(round(z))
+ddnorm_nim <- nimbleFunction(
+  run = function(x = double(0),
+                 mean = double(0),
+                 sd = double(0),
+                 log = integer(0, default = 0)) {
+    returnType(double(0))
+
+    if(sd <= 0) {
+      if(log) return(-Inf) else return(0.0)
+    }
+
+    ## enforce integer support (as in extraDistr)
+    if(x != floor(x)) {
+      if(log) return(-Inf) else return(0.0)
+    }
+
+    ## compute log PMF stably: log( Phi(b) - Phi(a) )
+    ## where a = (x-mean)/sd, b = (x+1-mean)/sd
+    lp_b <- pnorm(x + 1.0, mean, sd, 1, 1)  # log Phi((x+1-mean)/sd)
+    lp_a <- pnorm(x,       mean, sd, 1, 1)  # log Phi((x-mean)/sd)
+
+    logProb <- logspace_sub(lp_b, lp_a)
+
+    if(log) return(logProb) else return(exp(logProb))
   }
 )
 
-# Register for BUGS usage
+rdnorm_nim <- nimbleFunction(
+  run = function(n = integer(0), mean = double(0), sd = double(0)) {
+    returnType(double(0))
+    if(sd <= 0) return(NaN)
+    if(n != 1) stop("rdnorm_nim only handles n = 1")
+    return(floor(rnorm(1, mean, sd)))
+  }
+)
+
 registerDistributions(list(
-  droundnorm = list(
-    BUGSdist = "droundnorm(mu, sigma)",
-    types    = c("value = double(0)", "mu = double(0)", "sigma = double(0)"),
-    discrete = TRUE
+  ddnorm_nim = list(
+    BUGSdist = "ddnorm_nim(mean, sd)",
+    discrete = TRUE,
+    types = c('value = double(0)', 'mean = double(0)', 'sd = double(0)'),
+    pqAvail = FALSE,
+    range = c(-Inf, Inf)
   )
 ))
-
 
 
 ```

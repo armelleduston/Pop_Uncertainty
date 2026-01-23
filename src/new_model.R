@@ -44,20 +44,19 @@ new_model <- function(sim_data, bench = "none", eta = 0.3){
     num = num, # number of neighbors
     tau = sim_data$tau, # privacy budget param
     mu = mu, # explicitly give mu = 0
-    U_sd = U_sd, # discrepancy parameter
     L = L, # length of adj
     J = J, # length of region_id
     M = M, # pre-computed for dcar_proper
     C = C, # pre-computed for dcar_proper
     ind_mat = indicator, # to sum counts for benchmarking0
-    rho_max = rho_max
+    rho_max = rho_max,      
+    ones_u    = rep(1, J)
   )
   
   data <- list(
     Pstar_obs = sim_data$P_star,   # length n
     U_obs     = sim_data$U,        # length J
-    ones_p    = rep(1, n),         
-    ones_u    = rep(1, J)          
+    U_sd = U_sd # discrepancy parameter
   )
   
   
@@ -65,7 +64,6 @@ new_model <- function(sim_data, bench = "none", eta = 0.3){
   inits <- list(
     S           = rnorm(n, 0, 1),
     P           = pmax(sim_data$P_star, 1), 
-    Pstar       = sim_data$P_star,
     rho         = 0.5,
     log_kappa   = 0
   )
@@ -95,7 +93,7 @@ new_model <- function(sim_data, bench = "none", eta = 0.3){
     
     #### Measurement model: direct discrete Laplace noise --------------------
     for (i in 1:n) { 
-      Pstar_obs[i] ~ droundnorm(P[i], tau)
+      Pstar_obs[i] ~ ddnorm_nim(P[i], tau)
     }
     
     #### Exact benchmarking to higher-level totals ---------------------------
@@ -109,7 +107,7 @@ new_model <- function(sim_data, bench = "none", eta = 0.3){
     if (bench == "inexact"){
       for (j in 1:J) {
         U_sum[j] <- inprod(P[1:n], ind_mat[j, 1:n])
-        U_obs[j]  ~ droundnorm(U_sum[j], U_sd[j])
+        U_obs[j]  ~ ddnorm_nim(U_sum[j], U_sd[j])
       }
     }
   })
