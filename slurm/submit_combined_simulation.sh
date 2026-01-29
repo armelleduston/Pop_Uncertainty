@@ -7,10 +7,10 @@
 #SBATCH --cpus-per-task=20          # cores per node (adjust based on cluster)
 #SBATCH --mem=32G                   # memory per node (adjust as needed)
 #SBATCH --time=02:00:00             # max 2 hours per task
-#SBATCH --partition=standard        # adjust to your cluster's partition name
 
 # Load R module (adjust module name based on your cluster)
-module load R/4.3.0
+# Find available R versions with: module spider R
+module load R/4.3.1  
 
 # Set R library path to use custom package installation
 export R_LIBS_USER=~/R_libs/pop_uncertainty
