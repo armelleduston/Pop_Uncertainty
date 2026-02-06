@@ -714,3 +714,5 @@ Compiling
 Compiling
   [Note] This may take a minute.
   [Note] Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+[2026-01-29T14:46:35.308] error: *** JOB 57594309 ON holy8a28511 CANCELLED AT 2026-01-29T14:46:35 DUE TO TIME LIMIT ***
+[2026-01-29T14:46:35.517] error: Detected 1 oom_kill event in StepId=57594309.batch. Some of the step tasks have been OOM Killed.

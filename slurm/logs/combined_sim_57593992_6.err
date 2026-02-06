@@ -678,3 +678,71 @@ Compiling
 Compiling
   [Note] This may take a minute.
   [Note] Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+Compiling
+  [Note] This may take a minute.
+  [Note] Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+Compiling
+  [Note] This may take a minute.
+  [Note] Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+Compiling
+  [Note] This may take a minute.
+  [Note] Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+Compiling
+  [Note] This may take a minute.
+  [Note] Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+Defining model
+Defining model
+Defining model
+Building model
+Building model
+Building model
+Setting data and initial values
+Setting data and initial values
+Setting data and initial values
+Running calculate on model
+  [Note] Any error reports that follow may simply reflect missing values in model variables.
+Running calculate on model
+  [Note] Any error reports that follow may simply reflect missing values in model variables.
+Running calculate on model
+  [Note] Any error reports that follow may simply reflect missing values in model variables.
+Checking model sizes and dimensions
+Checking model sizes and dimensions
+Checking model sizes and dimensions
+Compiling
+  [Note] This may take a minute.
+  [Note] Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+Compiling
+  [Note] This may take a minute.
+  [Note] Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+Compiling
+  [Note] This may take a minute.
+  [Note] Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+Compiling
+  [Note] This may take a minute.
+  [Note] Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+Compiling
+  [Note] This may take a minute.
+  [Note] Use 'showCompilerOutput = TRUE' to see C++ compilation details.
+  [Note] 'U_obs' is provided in 'data' but is not a variable in the model and is being ignored.
+  [Note] 'U_sd' is provided in 'data' but is not a variable in the model and is being ignored.
+running chain 1...
+  [Note] 'U_obs' is provided in 'data' but is not a variable in the model and is being ignored.
+  [Note] 'U_sd' is provided in 'data' but is not a variable in the model and is being ignored.
+running chain 1...
+running chain 2...
+running chain 2...
+running chain 3...
+running chain 3...
+running chain 1...
+running chain 1...
+running chain 2...
+running chain 2...
+running chain 3...
+running chain 3...
+Warning message:
+In mclapply(chunks, run_chunk, mc.cores = n_cores) :
+  scheduled cores 34, 20, 39, 37, 18, 28, 23, 11, 41, 4, 3, 30, 36, 32, 9, 2, 10, 40, 47, 29, 14, 8, 45, 1, 43, 22, 13, 6, 26, 19, 31, 21, 17, 24, 27, 7, 16, 15, 44, 33, 35, 12, 5, 38, 25 encountered errors in user code, all values of the jobs will be affected
+Error in x$nobench : $ operator is invalid for atomic vectors
+Calls: do.call -> lapply -> FUN
+Execution halted
+[2026-01-29T13:53:35.987] error: Detected 13 oom_kill events in StepId=57594545.batch. Some of the step tasks have been OOM Killed.

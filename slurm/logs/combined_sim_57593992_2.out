@@ -1,10 +1,10 @@
 Job ID: 57594395
 Array Task ID: 2
-Running on node: holy8a32101.rc.fas.harvard.edu
+Running on node: holy7c20612.rc.fas.harvard.edu
 Number of cores: 20
-Start time: Thu Jan 29 12:46:52 EST 2026
+Start time: Thu Jan 29 13:54:40 EST 2026
 Task 2 of 10 : Running simulations 51 to 100 
-Running on 111 cores within this task...
+Running on 47 cores within this task...
 Starting parallel simulation for task 2 with 50 runs...
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
@@ -90,49 +90,6 @@ Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-===== Monitors =====
-  - rhothin = 1: log_kappa, rho
-
-===== Samplers =====
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-thin = 1: log_kappa, P, rho, S
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
@@ -145,7 +102,6 @@ Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-thin = 1: log_kappa, P, rho, S
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
@@ -192,143 +148,6 @@ RW sampler (2)
   - log_kappa
 CAR_proper sampler (1)
   - S[1:225] 
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-thin = 1: log_kappa, P, rho, S
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
 thin = 1: log_kappa, P, rho, S
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
@@ -354,171 +173,6 @@ Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
@@ -626,49 +280,6 @@ Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
@@ -681,7 +292,18 @@ Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-thin = 1: log_kappa, P, rho, S
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
@@ -708,47 +330,6 @@ thin = 1: log_kappa, P, rho, S
 ===== Monitors =====
 thin = 1: log_kappa, rho
 ===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
 ===== Monitors =====
 thin = 1: log_kappa, rho
 ===== Samplers =====
@@ -771,9 +352,6 @@ Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
 slice sampler (225)
   - P[]  (225 elements)
 RW sampler (2)
@@ -794,310 +372,6 @@ Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-thin = 1: log_kappa, P, rho, S
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-thin = 1: log_kappa, P, rho, S
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
-thin = 1: log_kappa, P, rho, S
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
-===== Monitors =====
-thin = 1: log_kappa, rho
-===== Samplers =====
-slice sampler (225)
-  - P[]  (225 elements)
-RW sampler (2)
-  - rho
-  - log_kappa
-CAR_proper sampler (1)
-  - S[1:225] 
 thin = 1: log_kappa, P, rho, S
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
 Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
@@ -1144,6 +418,310 @@ RW sampler (2)
   - log_kappa
 CAR_proper sampler (1)
   - S[1:225] 
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
 thin = 1: log_kappa, P, rho, S
 ===== Monitors =====
 thin = 1: log_kappa, rho
@@ -1156,3 +734,702 @@ RW sampler (2)
 CAR_proper sampler (1)
   - S[1:225] 
 thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+thin = 1: log_kappa, P, rho, S
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+thin = 1: log_kappa, P, rho, S
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+===== Monitors =====
+  - S[1:225] 
+thin = 1: log_kappa, rho
+===== Samplers =====
+thin = 1: log_kappa, P, rho, S
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+thin = 1: log_kappa, P, rho, S
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+thin = 1: log_kappa, P, rho, S
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+thin = 1: log_kappa, P, rho, S
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+thin = 1: log_kappa, P, rho, S
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+===== Monitors =====
+  - S[1:225] 
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho
+thin = 1: log_kappa, P, rho
+thin = 1: log_kappa, P, rho
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+||-------------|-------------|-------------|-------------|
+|Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+-|
+-|
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+-|
+-|
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+-|
+--|
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+-|
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+||-------------|-------------|-------------|-------------|
+|--|
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|-|
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|---|
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+|-------------|-------------|-------------|-------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+--|
+----|
+End time: Thu Jan 29 14:30:48 EST 2026
+Task 2 completed
