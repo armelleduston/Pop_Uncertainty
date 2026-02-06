@@ -49,7 +49,7 @@ cat(paste("Task", task_id, "of", n_tasks, ": Running simulations", start_idx, "t
 # MCMC settings
 niter   <- 10000
 nburnin <- 2000
-thin    <- 1
+thin    <- 5  # Thin more aggressively to reduce memory (stores 1600 samples instead of 8000)
 
 # ------------------------------------------------------------------------------
 # NIMBLE Custom Distributions (Must be defined in global scope)
@@ -165,30 +165,34 @@ get_results_bench <- function(samples, data){
 }
 
 # ------------------------------------------------------------------------------
+# Compile Models ONCE (before parallel execution)
+# ------------------------------------------------------------------------------
+
+cat("Compiling NIMBLE models (this will take a few minutes)...\n")
+data_dummy <- new_generate_data(root_n, rho, kappa, tau, J)
+
+# Compile no_bench model
+cat("  Compiling no_bench model...\n")
+no_bench_model <- DAS_model(data_dummy, bench = "none", eta = eta)
+objs_nb <- compile_model(no_bench_model, monitor_S = TRUE)
+
+# Compile bench model
+cat("  Compiling bench model...\n")
+bench_model <- DAS_model(data_dummy, bench = "inexact", eta = eta)
+objs_b <- compile_model(bench_model, monitor_S = FALSE)
+
+cat("Model compilation complete!\n\n")
+
+# ------------------------------------------------------------------------------
 # Parallel Worker Function
 # ------------------------------------------------------------------------------
 
-run_chunk <- function(chunk_indices) {
+run_chunk <- function(chunk_indices, no_bench_cmcmc, no_bench_cmodel, 
+                      bench_cmcmc, bench_cmodel) {
   # Load libraries inside worker to ensure environment is correct
   library(nimble)
   library(coda)
   library(R.utils)
-  
-  # 1. Compile BOTH models ONCE per worker
-  # Generate dummy data just to define the model structure
-  data_dummy <- new_generate_data(root_n, rho, kappa, tau, J)
-  
-  # Compile no_bench model
-  no_bench_model <- DAS_model(data_dummy, bench = "none", eta = eta)
-  objs_nb <- compile_model(no_bench_model, monitor_S = TRUE)
-  no_bench_cmodel <- objs_nb$Cmodel
-  no_bench_cmcmc  <- objs_nb$Cmcmc
-  
-  # Compile bench model
-  bench_model <- DAS_model(data_dummy, bench = "inexact", eta = eta)
-  objs_b <- compile_model(bench_model, monitor_S = FALSE)
-  bench_cmodel <- objs_b$Cmodel
-  bench_cmcmc  <- objs_b$Cmcmc
   
   # Storage for this chunk
   chunk_results_nobench <- matrix(0, nrow = length(chunk_indices), ncol = 7)
@@ -287,6 +291,10 @@ run_chunk <- function(chunk_indices) {
     } else {
       chunk_results_bench[i, ] <- c(get_results_bench(bench_samples, data_r), bench_time)
     }
+    
+    # Force garbage collection to free memory immediately
+    rm(no_bench_samples, bench_samples, data_r)
+    gc(verbose = FALSE)
   }
   
   return(list(nobench = chunk_results_nobench, bench = chunk_results_bench))
@@ -296,8 +304,8 @@ run_chunk <- function(chunk_indices) {
 # Main Execution
 # ------------------------------------------------------------------------------
 
-# Detect cores (leave one free)
-n_cores <- detectCores() - 1
+# Use SLURM allocation instead of detectCores() to avoid over-parallelization
+n_cores <- as.numeric(Sys.getenv("SLURM_CPUS_PER_TASK", detectCores() - 1))
 cat(paste("Running on", n_cores, "cores within this task...\n"))
 
 # Split the task's assigned indices into chunks for each core
@@ -306,7 +314,12 @@ chunks <- split(task_indices, cut(seq_along(task_indices), n_cores, labels = FAL
 
 # Run parallel simulation for this task's subset
 cat("Starting parallel simulation for task", task_id, "with", task_runs, "runs...\n")
-results_list <- mclapply(chunks, run_chunk, mc.cores = n_cores)
+results_list <- mclapply(chunks, run_chunk, 
+                         no_bench_cmcmc = objs_nb$Cmcmc,
+                         no_bench_cmodel = objs_nb$Cmodel,
+                         bench_cmcmc = objs_b$Cmcmc,
+                         bench_cmodel = objs_b$Cmodel,
+                         mc.cores = n_cores)
 
 # Combine results from this task
 no_bench_results <- do.call(rbind, lapply(results_list, function(x) x$nobench))

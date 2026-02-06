@@ -16,7 +16,7 @@ This setup runs 500 simulations across multiple nodes on a SLURM cluster. Each s
 On the cluster, run once to install all required packages:
 ```bash
 # Load R module
-module load R/4.3.0
+module load R/4.3.1
 
 # Run setup script (takes 10-20 minutes)
 Rscript full_sim/setup_r_environment.R
@@ -30,7 +30,7 @@ Edit `slurm/submit_combined_simulation.sh` and adjust these settings for your cl
 - `#SBATCH --cpus-per-task=20` - Cores per node
 - `#SBATCH --mem=32G` - Memory per node
 - `#SBATCH --partition=standard` - Your cluster's partition name
-- `module load R/4.3.0` - Your cluster's R module
+- `module load R/4.3.1` - Your cluster's R module
 
 ### 2. Create logs directory
 ```bash

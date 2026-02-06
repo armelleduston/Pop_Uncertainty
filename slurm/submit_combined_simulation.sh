@@ -5,8 +5,8 @@
 #SBATCH --array=1-10                # 10 tasks (adjust as needed)
 #SBATCH --ntasks=1                  # 1 task per node
 #SBATCH --cpus-per-task=20          # cores per node (adjust based on cluster)
-#SBATCH --mem=32G                   # memory per node (adjust as needed)
-#SBATCH --time=02:00:00             # max 2 hours per task
+#SBATCH --mem=64G                   # Increased from 32G - models compile once now
+#SBATCH --time=03:00:00             # Increased to 3 hours for safety
 
 # Load R module (adjust module name based on your cluster)
 # Find available R versions with: module spider R
