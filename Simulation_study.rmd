@@ -587,3 +587,66 @@ sum(ifelse(true_Ps >= bench_CIs[1,] & true_Ps <= bench_CIs[2,], 1, 0))/(root_n^2
 
 
 ```
+# Large Scale Simulation Results
+
+```{r}
+# Combine results from all simulation tasks
+
+# Find all task-specific result files (new combined format)
+result_files <- list.files("full_sim/results", 
+                           pattern = "^simulation_results_task_\\d+\\.csv$", 
+                           full.names = TRUE)
+
+cat(paste("Found", length(result_files), "task result files\n"))
+
+# Combine all results into one dataframe
+if (length(result_files) > 0) {
+  result_list <- lapply(result_files, read.csv)
+  results_df <- do.call(rbind, result_list)
+  results_df <- results_df[order(results_df$Run), ]
+  cat(paste("Combined results:", nrow(results_df), "runs\n"))
+  
+  # Display structure
+  cat("\nDataframe columns:\n")
+  print(colnames(results_df))
+  
+  # Print summary
+  cat("\n=== SUMMARY STATISTICS ===\n")
+  summary_stats <- data.frame(
+    Metric = c("NoBench_Bias", "NoBench_Coverage", "NoBench_Runtime",
+               "Bench_Bias", "Bench_Coverage", "Bench_Runtime",
+               "Diff_Bench_Pstar", "Diff_NoBench_Pstar", "Diff_Bench_NoBench"),
+    Mean = c(
+      mean(results_df$NoBench_Bias, na.rm = TRUE),
+      mean(results_df$NoBench_Coverage, na.rm = TRUE),
+      mean(results_df$NoBench_Runtime, na.rm = TRUE),
+      mean(results_df$Bench_Bias, na.rm = TRUE),
+      mean(results_df$Bench_Coverage, na.rm = TRUE),
+      mean(results_df$Bench_Runtime, na.rm = TRUE),
+      mean(results_df$Diff_Bench_Pstar, na.rm = TRUE),
+      mean(results_df$Diff_NoBench_Pstar, na.rm = TRUE),
+      mean(results_df$Diff_Bench_NoBench, na.rm = TRUE)
+    ),
+    SD = c(
+      sd(results_df$NoBench_Bias, na.rm = TRUE),
+      sd(results_df$NoBench_Coverage, na.rm = TRUE),
+      sd(results_df$NoBench_Runtime, na.rm = TRUE),
+      sd(results_df$Bench_Bias, na.rm = TRUE),
+      sd(results_df$Bench_Coverage, na.rm = TRUE),
+      sd(results_df$Bench_Runtime, na.rm = TRUE),
+      sd(results_df$Diff_Bench_Pstar, na.rm = TRUE),
+      sd(results_df$Diff_NoBench_Pstar, na.rm = TRUE),
+      sd(results_df$Diff_Bench_NoBench, na.rm = TRUE)
+    )
+  )
+  print(summary_stats)
+  
+  cat("\nN_Failures:", sum(is.na(results_df$NoBench_Runtime)), "\n")
+  
+} else {
+  cat("No result files found\n")
+  results_df <- NULL
+}
+
+```
+

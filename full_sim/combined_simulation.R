@@ -115,17 +115,13 @@ registerDistributions(list(
 # Helper Functions
 # ------------------------------------------------------------------------------
 
-compile_model <- function(model, monitor_S = TRUE){
+compile_model <- function(model){
   conf  <- configureMCMC(model)
   conf$removeSampler('rho')
   conf$addSampler(target = 'rho', type = 'slice')
   conf$removeSampler('log_kappa')
   conf$addSampler(target = 'log_kappa', type = 'slice')
-  if (monitor_S) {
-    conf$addMonitors(c("S", "P"))
-  } else {
-    conf$addMonitors(c("P"))
-  }
+  conf$addMonitors(c("S", "P"))
   
   Rmcmc <- buildMCMC(conf)
   Cmodel <- compileNimble(model)
@@ -134,34 +130,65 @@ compile_model <- function(model, monitor_S = TRUE){
   return(list(Cmodel = Cmodel, Cmcmc = Cmcmc))
 }
 
-get_results <- function(samples, data){
+get_combined_results <- function(no_bench_samples, bench_samples, data, 
+                                  no_bench_time, bench_time){
   true_Ps <- data$P
-  modeled_Ps <- cbind(samples[[1]][,paste0("P[", 1:root_n^2, "]")])
-  bias <- mean(apply(true_Ps - modeled_Ps, 2, mean))
-  CIs <- apply(X=modeled_Ps, MARGIN=2 ,
-               FUN= function(x) quantile(x, probs = c(0.025, 0.975)))
-  coverage <- mean(ifelse(true_Ps >= CIs[1,] & true_Ps <= CIs[2,], 1, 0))
+  true_Pstar <- data$P_star
+  n <- length(true_Ps)
   
-  gelman <- gelman.diag(as.mcmc.list(samples)[, c("rho", "log_kappa", 
-                                         "S[1]", "P[1]")],
-              autoburnin = FALSE)
+  # Extract posterior means (P_hat) for both models
+  no_bench_Phat <- colMeans(no_bench_samples[[1]][, paste0("P[", 1:n, "]")])
+  bench_Phat <- colMeans(bench_samples[[1]][, paste0("P[", 1:n, "]")])
   
-  return (c(bias, coverage, c(gelman$psrf[,1])))
-}
-
-get_results_bench <- function(samples, data){
-  # For bench model, S is not monitored, so adapt the Gelman diagnostic
-  true_Ps <- data$P
-  modeled_Ps <- cbind(samples[[1]][,paste0("P[", 1:root_n^2, "]")])
-  bias <- mean(apply(true_Ps - modeled_Ps, 2, mean))
-  CIs <- apply(X=modeled_Ps, MARGIN=2 ,
-               FUN= function(x) quantile(x, probs = c(0.025, 0.975)))
-  coverage <- mean(ifelse(true_Ps >= CIs[1,] & true_Ps <= CIs[2,], 1, 0))
+  # Compute metrics for no_bench model
+  no_bench_modeled_Ps <- cbind(no_bench_samples[[1]][, paste0("P[", 1:n, "]")])
+  no_bench_bias <- mean(apply(true_Ps - no_bench_modeled_Ps, 2, mean))
+  no_bench_CIs <- apply(X = no_bench_modeled_Ps, MARGIN = 2,
+                        FUN = function(x) quantile(x, probs = c(0.025, 0.975)))
+  no_bench_coverage <- mean(ifelse(true_Ps >= no_bench_CIs[1,] & 
+                                    true_Ps <= no_bench_CIs[2,], 1, 0))
   
-  gelman <- gelman.diag(as.mcmc.list(samples)[, c("rho", "log_kappa", "P[1]")],
-              autoburnin = FALSE)
+  no_bench_gelman <- gelman.diag(as.mcmc.list(no_bench_samples)[, 
+                                  c("rho", "log_kappa", "S[1]", "P[1]")],
+                                 autoburnin = FALSE)
   
-  return (c(bias, coverage, c(gelman$psrf[,1])))
+  # Compute metrics for bench model
+  bench_modeled_Ps <- cbind(bench_samples[[1]][, paste0("P[", 1:n, "]")])
+  bench_bias <- mean(apply(true_Ps - bench_modeled_Ps, 2, mean))
+  bench_CIs <- apply(X = bench_modeled_Ps, MARGIN = 2,
+                     FUN = function(x) quantile(x, probs = c(0.025, 0.975)))
+  bench_coverage <- mean(ifelse(true_Ps >= bench_CIs[1,] & 
+                                 true_Ps <= bench_CIs[2,], 1, 0))
+  
+  bench_gelman <- gelman.diag(as.mcmc.list(bench_samples)[, 
+                              c("rho", "log_kappa", "S[1]", "P[1]")],
+                              autoburnin = FALSE)
+  
+  # Compute differences
+  diff_bench_Pstar <- mean(abs(bench_Phat - true_Pstar))  # |P_hat_bench - P*|
+  diff_nobench_Pstar <- mean(abs(no_bench_Phat - true_Pstar))  # |P_hat_nobench - P*|
+  diff_bench_nobench <- mean(abs(bench_Phat - no_bench_Phat))  # |P_hat_bench - P_hat_nobench|
+  
+  # Return combined results as a vector
+  return(c(
+    no_bench_bias = no_bench_bias,
+    no_bench_coverage = no_bench_coverage,
+    no_bench_gelman_rho = no_bench_gelman$psrf["rho", 1],
+    no_bench_gelman_log_kappa = no_bench_gelman$psrf["log_kappa", 1],
+    no_bench_gelman_S1 = no_bench_gelman$psrf["S[1]", 1],
+    no_bench_gelman_P1 = no_bench_gelman$psrf["P[1]", 1],
+    no_bench_runtime = no_bench_time,
+    bench_bias = bench_bias,
+    bench_coverage = bench_coverage,
+    bench_gelman_rho = bench_gelman$psrf["rho", 1],
+    bench_gelman_log_kappa = bench_gelman$psrf["log_kappa", 1],
+    bench_gelman_S1 = bench_gelman$psrf["S[1]", 1],
+    bench_gelman_P1 = bench_gelman$psrf["P[1]", 1],
+    bench_runtime = bench_time,
+    diff_bench_Pstar = diff_bench_Pstar,
+    diff_nobench_Pstar = diff_nobench_Pstar,
+    diff_bench_nobench = diff_bench_nobench
+  ))
 }
 
 # ------------------------------------------------------------------------------
@@ -174,12 +201,12 @@ data_dummy <- new_generate_data(root_n, rho, kappa, tau, J)
 # Compile no_bench model
 cat("  Compiling no_bench model...\n")
 no_bench_model <- DAS_model(data_dummy, bench = "none", eta = eta)
-objs_nb <- compile_model(no_bench_model, monitor_S = TRUE)
+objs_nb <- compile_model(no_bench_model)
 
 # Compile bench model
 cat("  Compiling bench model...\n")
 bench_model <- DAS_model(data_dummy, bench = "inexact", eta = eta)
-objs_b <- compile_model(bench_model, monitor_S = FALSE)
+objs_b <- compile_model(bench_model)
 
 cat("Model compilation complete!\n\n")
 
@@ -194,11 +221,10 @@ run_chunk <- function(chunk_indices, no_bench_cmcmc, no_bench_cmodel,
   library(coda)
   library(R.utils)
   
-  # Storage for this chunk
-  chunk_results_nobench <- matrix(0, nrow = length(chunk_indices), ncol = 7)
-  chunk_results_bench <- matrix(0, nrow = length(chunk_indices), ncol = 6)
+  # Storage for this chunk - combined results
+  chunk_results <- matrix(0, nrow = length(chunk_indices), ncol = 17)
   
-  # 2. Loop over assigned iterations
+  # Loop over assigned iterations
   for (i in seq_along(chunk_indices)) {
     r <- chunk_indices[i]
     
@@ -246,12 +272,6 @@ run_chunk <- function(chunk_indices, no_bench_cmcmc, no_bench_cmodel,
       )
     }, silent = TRUE)
     
-    if (inherits(try_no_bench, "try-error")) {
-      chunk_results_nobench[i, ] <- NA
-    } else {
-      chunk_results_nobench[i, ] <- c(get_results(no_bench_samples, data_r), no_bench_time)
-    }
-    
     # ========================================================================
     # Run BENCH model
     # ========================================================================
@@ -286,10 +306,12 @@ run_chunk <- function(chunk_indices, no_bench_cmcmc, no_bench_cmodel,
       )
     }, silent = TRUE)
     
-    if (inherits(try_bench, "try-error")) {
-      chunk_results_bench[i, ] <- NA
+    # Compute combined results only if both models succeeded
+    if (inherits(try_no_bench, "try-error") || inherits(try_bench, "try-error")) {
+      chunk_results[i, ] <- NA
     } else {
-      chunk_results_bench[i, ] <- c(get_results_bench(bench_samples, data_r), bench_time)
+      chunk_results[i, ] <- get_combined_results(no_bench_samples, bench_samples, 
+                                                  data_r, no_bench_time, bench_time)
     }
     
     # Force garbage collection to free memory immediately
@@ -297,7 +319,7 @@ run_chunk <- function(chunk_indices, no_bench_cmcmc, no_bench_cmodel,
     gc(verbose = FALSE)
   }
   
-  return(list(nobench = chunk_results_nobench, bench = chunk_results_bench))
+  return(chunk_results)
 }
 
 # ------------------------------------------------------------------------------
@@ -322,56 +344,55 @@ results_list <- mclapply(chunks, run_chunk,
                          mc.cores = n_cores)
 
 # Combine results from this task
-no_bench_results <- do.call(rbind, lapply(results_list, function(x) x$nobench))
-bench_results <- do.call(rbind, lapply(results_list, function(x) x$bench))
+combined_results <- do.call(rbind, results_list)
 
 # Add column names
-colnames(no_bench_results) <- c("Bias", "CI_Coverage", "Gelman_rho", "Gelman_log_kappa", 
-                                "Gelman_S1", "Gelman_P1", "Runtime")
-colnames(bench_results) <- c("Bias", "CI_Coverage", "Gelman_rho", "Gelman_log_kappa", 
-                             "Gelman_P1", "Runtime")
+colnames(combined_results) <- c(
+  "NoBench_Bias", "NoBench_Coverage", 
+  "NoBench_Gelman_rho", "NoBench_Gelman_log_kappa", 
+  "NoBench_Gelman_S1", "NoBench_Gelman_P1", "NoBench_Runtime",
+  "Bench_Bias", "Bench_Coverage", 
+  "Bench_Gelman_rho", "Bench_Gelman_log_kappa", 
+  "Bench_Gelman_S1", "Bench_Gelman_P1", "Bench_Runtime",
+  "Diff_Bench_Pstar", "Diff_NoBench_Pstar", "Diff_Bench_NoBench"
+)
 
 # Add run indices as first column
-no_bench_results <- cbind(Run = start_idx:end_idx, no_bench_results)
-bench_results <- cbind(Run = start_idx:end_idx, bench_results)
+combined_results <- cbind(Run = start_idx:end_idx, combined_results)
 
-# Save results to task-specific CSV files
-cat("Saving results to task-specific CSV files...\n")
-write.csv(no_bench_results, 
-          paste0("full_sim/results/no_bench_results_task_", task_id, ".csv"), 
-          row.names = FALSE)
-write.csv(bench_results, 
-          paste0("full_sim/results/bench_results_task_", task_id, ".csv"), 
+# Save results to task-specific CSV file
+cat("Saving results to task-specific CSV file...\n")
+write.csv(combined_results, 
+          paste0("full_sim/results/simulation_results_task_", task_id, ".csv"), 
           row.names = FALSE)
 
 # Print summary for this task
-cat("\n=== TASK", task_id, "NO BENCH MODEL SUMMARY ===\n")
-summary_nobench <- data.frame(
+cat("\n=== TASK", task_id, "SUMMARY ===\n")
+summary_df <- data.frame(
   Task = task_id,
-  Avg_Bias = mean(no_bench_results[, "Bias"], na.rm = TRUE),
-  Avg_Coverage = mean(no_bench_results[, "CI_Coverage"], na.rm = TRUE),
-  Avg_Runtime = mean(no_bench_results[, "Runtime"], na.rm = TRUE),
-  N_Failures = sum(is.na(no_bench_results[, "Runtime"]))
+  NoBench_Avg_Bias = mean(combined_results[, "NoBench_Bias"], na.rm = TRUE),
+  NoBench_Avg_Coverage = mean(combined_results[, "NoBench_Coverage"], na.rm = TRUE),
+  NoBench_Avg_Runtime = mean(combined_results[, "NoBench_Runtime"], na.rm = TRUE),
+  Bench_Avg_Bias = mean(combined_results[, "Bench_Bias"], na.rm = TRUE),
+  Bench_Avg_Coverage = mean(combined_results[, "Bench_Coverage"], na.rm = TRUE),
+  Bench_Avg_Runtime = mean(combined_results[, "Bench_Runtime"], na.rm = TRUE),
+  Avg_Diff_Bench_Pstar = mean(combined_results[, "Diff_Bench_Pstar"], na.rm = TRUE),
+  Avg_Diff_NoBench_Pstar = mean(combined_results[, "Diff_NoBench_Pstar"], na.rm = TRUE),
+  Avg_Diff_Bench_NoBench = mean(combined_results[, "Diff_Bench_NoBench"], na.rm = TRUE),
+  N_Failures = sum(is.na(combined_results[, "NoBench_Runtime"]))
 )
-print(summary_nobench)
-
-cat("\n=== TASK", task_id, "BENCH MODEL SUMMARY ===\n")
-summary_bench <- data.frame(
-  Task = task_id,
-  Avg_Bias = mean(bench_results[, "Bias"], na.rm = TRUE),
-  Avg_Coverage = mean(bench_results[, "CI_Coverage"], na.rm = TRUE),
-  Avg_Runtime = mean(bench_results[, "Runtime"], na.rm = TRUE),
-  N_Failures = sum(is.na(bench_results[, "Runtime"]))
-)
-print(summary_bench)
+print(summary_df)
 
 cat("\n=== GELMAN DIAGNOSTICS > 1.01 ===\n")
 cat("No Bench Model:\n")
-print(apply(no_bench_results[, 4:7] > 1.01, 2, sum, na.rm = TRUE))
+print(apply(combined_results[, c("NoBench_Gelman_rho", "NoBench_Gelman_log_kappa", 
+                                  "NoBench_Gelman_S1", "NoBench_Gelman_P1")] > 1.01, 
+            2, sum, na.rm = TRUE))
 cat("\nBench Model:\n")
-print(apply(bench_results[, 4:6] > 1.01, 2, sum, na.rm = TRUE))
+print(apply(combined_results[, c("Bench_Gelman_rho", "Bench_Gelman_log_kappa", 
+                                  "Bench_Gelman_S1", "Bench_Gelman_P1")] > 1.01, 
+            2, sum, na.rm = TRUE))
 
 cat("\nTask", task_id, "results saved to:\n")
-cat("  - full_sim/results/no_bench_results_task_", task_id, ".csv\n", sep = "")
-cat("  - full_sim/results/bench_results_task_", task_id, ".csv\n", sep = "")
+cat("  - full_sim/results/simulation_results_task_", task_id, ".csv\n", sep = "")
 cat("\nTask", task_id, "completed successfully!\n")
