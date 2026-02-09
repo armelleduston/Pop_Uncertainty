@@ -81,12 +81,28 @@ ddnorm_nim <- nimbleFunction(
       if(log) return(-Inf) else return(0.0)
     }
     
-    ## compute log PMF stably: log( Phi(b) - Phi(a) )
+    ## enforce truncation at zero (non-negative integers only)
+    if(x < 0) {
+      if(log) return(-Inf) else return(0.0)
+    }
+    
+    ## compute log PMF stably for truncated discrete normal:
+    ## P(X = x | X >= 0) = P(X = x) / P(X >= 0)
+    ## where X ~ discrete normal(mean, sd)
+    
+    ## log P(X = x) for discrete normal: log( Phi(b) - Phi(a) )
     ## where a = (x-mean)/sd, b = (x+1-mean)/sd
     lp_b <- pnorm(x + 1.0, mean, sd, 1, 1)  # log Phi((x+1-mean)/sd)
     lp_a <- pnorm(x,       mean, sd, 1, 1)  # log Phi((x-mean)/sd)
+    logProb_x <- logspace_sub(lp_b, lp_a)
     
-    logProb <- logspace_sub(lp_b, lp_a)
+    ## log P(X >= 0) = log(1 - P(X < 0)) = log(1 - Phi(-0.5 - mean)/sd))
+    ## P(X < 0) for discrete normal = Phi((0 - mean)/sd)
+    lp_neg <- pnorm(0, mean, sd, 1, 1)  # log Phi((0-mean)/sd)
+    log_truncation <- log1p(-exp(lp_neg))  # log(1 - P(X < 0))
+    
+    ## log P(X = x | X >= 0) = log P(X = x) - log P(X >= 0)
+    logProb <- logProb_x - log_truncation
     
     if(log) return(logProb) else return(exp(logProb))
   }
@@ -97,7 +113,19 @@ rdnorm_nim <- nimbleFunction(
     returnType(double(0))
     if(sd <= 0) return(NaN)
     if(n != 1) stop("rdnorm_nim only handles n = 1")
-    return(floor(rnorm(1, mean, sd)))
+    
+    ## Sample from truncated discrete normal (truncated at 0)
+    ## Use rejection sampling: keep sampling until we get a non-negative value
+    val <- floor(rnorm(1, mean, sd))
+    max_attempts <- 1000
+    attempts <- 0
+    while(val < 0 && attempts < max_attempts) {
+      val <- floor(rnorm(1, mean, sd))
+      attempts <- attempts + 1
+    }
+    ## If still negative after max attempts (unlikely unless mean << 0), return 0
+    if(val < 0) val <- 0
+    return(val)
   }
 )
 
@@ -107,7 +135,7 @@ registerDistributions(list(
     discrete = TRUE,
     types = c('value = double(0)', 'mean = double(0)', 'sd = double(0)'),
     pqAvail = FALSE,
-    range = c(-Inf, Inf)
+    range = c(0, Inf)
   )
 ))
 

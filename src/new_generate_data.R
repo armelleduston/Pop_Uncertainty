@@ -100,8 +100,8 @@ new_generate_data <- function(root_n, rho, kappa, tau, J){
   rural_urban <- rbinom(n ,1, exp(S)/(1 + exp(S)))
   rural_idx = which(rural_urban == 1)
   urban_idx = which(rural_urban == 0)
-  base_pop[rural_idx] <- rlnorm(n=length(rural_idx), 9.9, 0.55)
-  base_pop[urban_idx] <- rlnorm(n=length(rural_idx), 12.5, 0.85)
+  base_pop[rural_idx] <- rtnorm(n=length(rural_idx), 50, 25, a=0)
+  base_pop[urban_idx] <- rtnorm(n=length(urban_idx), 500, 100, a=0)
   
   lambda <- base_pop * exp(S)
   P <- rpois(n, lambda)

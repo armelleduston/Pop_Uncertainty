@@ -587,66 +587,66 @@ sum(ifelse(true_Ps >= bench_CIs[1,] & true_Ps <= bench_CIs[2,], 1, 0))/(root_n^2
 
 
 ```
-# Large Scale Simulation Results
+
+# Large Scale Simulation Results (from cluster)
 
 ```{r}
 # Combine results from all simulation tasks
 
 # Find all task-specific result files (new combined format)
-result_files <- list.files("full_sim/results", 
+result_files <- list.files("full_sim/results/sim_R500_Pbig", 
                            pattern = "^simulation_results_task_\\d+\\.csv$", 
                            full.names = TRUE)
 
 cat(paste("Found", length(result_files), "task result files\n"))
 
 # Combine all results into one dataframe
-if (length(result_files) > 0) {
-  result_list <- lapply(result_files, read.csv)
-  results_df <- do.call(rbind, result_list)
-  results_df <- results_df[order(results_df$Run), ]
-  cat(paste("Combined results:", nrow(results_df), "runs\n"))
+result_list <- lapply(result_files, read.csv)
+results_df <- do.call(rbind, result_list)
+results_df <- results_df[order(results_df$Run), ]
+cat(paste("Combined results:", nrow(results_df), "runs\n"))
+
+# # Display structure
+# cat("\nDataframe columns:\n")
+# print(colnames(results_df))
+
+# Print summary
+cat("\n=== SUMMARY STATISTICS ===\n")
+
+big_res <- data.frame(cbind(rbind(mean(results_df$NoBench_Bias, na.rm = TRUE),
+                      mean(results_df$NoBench_Coverage, na.rm = TRUE),
+                      mean(results_df$NoBench_Runtime, na.rm = TRUE),
+                      mean(results_df$NoBench_Gelman_rho, na.rm = TRUE),
+                      mean(results_df$NoBench_Gelman_log_kappa, na.rm = TRUE),
+                      mean(results_df$NoBench_Gelman_S1, na.rm = TRUE),
+                      mean(results_df$NoBench_Gelman_P1, na.rm = TRUE),
+                      mean(results_df$Diff_Bench_Pstar, na.rm = TRUE),
+                      mean(results_df$Diff_NoBench_Pstar, na.rm = TRUE),
+                      mean(results_df$Diff_Bench_NoBench, na.rm = TRUE)),
+                      rbind(mean(results_df$Bench_Bias, na.rm = TRUE),
+                      mean(results_df$Bench_Coverage, na.rm = TRUE),
+                      mean(results_df$Bench_Runtime, na.rm = TRUE),
+                      mean(results_df$Bench_Gelman_rho, na.rm = TRUE),
+                      mean(results_df$Bench_Gelman_log_kappa, na.rm = TRUE),
+                      mean(results_df$Bench_Gelman_S1, na.rm = TRUE),
+                      mean(results_df$Bench_Gelman_P1, na.rm = TRUE),
+                      NA,
+                      NA,
+                      NA)))
+colnames(big_res) <- c("No Bench", "Bench")
+rownames(big_res) <- c("Bias", "Coverage",
+             "Runtime", "Gelman_rho",
+             "Gelman_log_kappa", "Gelman_S1",
+             "Gelman_P1", "P_b - P*", 
+             "P_nb - P*", "P_b - P_nb")
+
+big_res |>
+  kbl(caption = "Simulation Results (R=500)",
+      booktabs = TRUE,
+      digits = 5) |>
+    kable_styling(full_width = FALSE,
+                  latex_options = c("hold_position", "striped"))
   
-  # Display structure
-  cat("\nDataframe columns:\n")
-  print(colnames(results_df))
-  
-  # Print summary
-  cat("\n=== SUMMARY STATISTICS ===\n")
-  summary_stats <- data.frame(
-    Metric = c("NoBench_Bias", "NoBench_Coverage", "NoBench_Runtime",
-               "Bench_Bias", "Bench_Coverage", "Bench_Runtime",
-               "Diff_Bench_Pstar", "Diff_NoBench_Pstar", "Diff_Bench_NoBench"),
-    Mean = c(
-      mean(results_df$NoBench_Bias, na.rm = TRUE),
-      mean(results_df$NoBench_Coverage, na.rm = TRUE),
-      mean(results_df$NoBench_Runtime, na.rm = TRUE),
-      mean(results_df$Bench_Bias, na.rm = TRUE),
-      mean(results_df$Bench_Coverage, na.rm = TRUE),
-      mean(results_df$Bench_Runtime, na.rm = TRUE),
-      mean(results_df$Diff_Bench_Pstar, na.rm = TRUE),
-      mean(results_df$Diff_NoBench_Pstar, na.rm = TRUE),
-      mean(results_df$Diff_Bench_NoBench, na.rm = TRUE)
-    ),
-    SD = c(
-      sd(results_df$NoBench_Bias, na.rm = TRUE),
-      sd(results_df$NoBench_Coverage, na.rm = TRUE),
-      sd(results_df$NoBench_Runtime, na.rm = TRUE),
-      sd(results_df$Bench_Bias, na.rm = TRUE),
-      sd(results_df$Bench_Coverage, na.rm = TRUE),
-      sd(results_df$Bench_Runtime, na.rm = TRUE),
-      sd(results_df$Diff_Bench_Pstar, na.rm = TRUE),
-      sd(results_df$Diff_NoBench_Pstar, na.rm = TRUE),
-      sd(results_df$Diff_Bench_NoBench, na.rm = TRUE)
-    )
-  )
-  print(summary_stats)
-  
-  cat("\nN_Failures:", sum(is.na(results_df$NoBench_Runtime)), "\n")
-  
-} else {
-  cat("No result files found\n")
-  results_df <- NULL
-}
 
 ```
 
