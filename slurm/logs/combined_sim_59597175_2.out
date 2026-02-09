@@ -1,0 +1,33 @@
+Job ID: 59597182
+Array Task ID: 2
+Running on node: holy7c053501.rc.fas.harvard.edu
+Number of cores: 20
+Start time: Mon Feb  9 11:41:40 EST 2026
+Task 2 of 10 : Running simulations 51 to 100 
+Compiling NIMBLE models (this will take a few minutes)...
+  Compiling no_bench model...
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+Run-time warning: matrix used in call to nimEigen() has a complex eigenvalue.
+===== Monitors =====
+thin = 1: log_kappa, rho
+===== Samplers =====
+slice sampler (225)
+  - P[]  (225 elements)
+RW sampler (2)
+  - rho
+  - log_kappa
+CAR_proper sampler (1)
+  - S[1:225] 
+thin = 1: log_kappa, P, rho, S
+End time: Mon Feb  9 11:42:42 EST 2026
+Task 2 completed
